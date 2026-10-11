@@ -1,0 +1,13 @@
+du: how much space does a folder or file use? (df is for whole disks)
+
+du -sh .                                      # total size of the current folder (-s summary, -h human-readable)
+du -sh *                                      # size of each item here (hidden files are not matched by *; use .[!.]* * to include them)
+du -h -d 1 .                                  # one level deep: each subfolder and its size (-d 1 = depth; GNU also accepts --max-depth=1)
+du -h -d 1 . | sort -h                        # same, sorted with the biggest LAST (sort -h understands K, M, G)
+du -sh * | sort -rh | head -10                # the 10 biggest items in this folder
+du -ah . | sort -rh | head -20                # the 20 biggest files and folders anywhere below here (-a includes files)
+du -sh node_modules                           # check one folder
+du -hc a.log b.log                            # sizes of several files plus a grand total (-c)
+du -sk .                                      # size in KB, handy in scripts (-k)
+Disk usage counts whole blocks, so many tiny files take more than their bytes add up to.
+Whole disk free space: explain-df.

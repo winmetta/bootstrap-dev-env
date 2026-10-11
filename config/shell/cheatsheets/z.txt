@@ -1,0 +1,11 @@
+z (zoxide): smarter cd. It learns the folders you visit, then jumps by a fragment of the name.
+
+z projects                                   # jump to the best-matching folder you have used before
+z proj app                                   # several fragments, in order: finds ~/projects/my-app
+z -                                            # back to the previous folder
+zi projects                                  # interactive: choose among the matches with fzf
+zoxide query -ls                              # list what it has learned, with scores (-l list, -s score)
+zoxide query projects                        # print the match without going there
+zoxide add ~/some/dir                         # teach it a folder without visiting
+zoxide remove ~/old/dir                       # forget a folder
+It only knows folders you visited since it was installed; plain cd still works and also teaches it.

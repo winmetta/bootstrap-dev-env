@@ -1,0 +1,9 @@
+# VS Code extensions installed by bootstrap.sh, one id per line. Editor tooling only:
+# project-specific extensions belong in each project's .vscode/extensions.json.
+dbaeumer.vscode-eslint
+esbenp.prettier-vscode
+timonwong.shellcheck
+mkhl.shfmt
+editorconfig.editorconfig
+davidanson.vscode-markdownlint
+anthropic.claude-code

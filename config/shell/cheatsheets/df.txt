@@ -1,0 +1,10 @@
+df: how full are your disks? (macOS and Linux)
+
+df -h                                         # every mounted filesystem with human-readable sizes (K, M, G)
+df -h .                                       # only the disk that holds the current folder, and how full it is
+df -h ~                                       # the disk that holds your home folder
+df -H                                         # sizes in powers of 1000, the way disk makers count (-h uses 1024)
+df -i                                         # inode usage: you can run out of file slots before bytes (Used/iused, Avail/ifree)
+df -h | sort -k5 -n                           # sort by the Capacity column (macOS puts it in column 5)
+On macOS the Data volume (/System/Volumes/Data) is where your files live; the system volume is read-only.
+Which folder uses the space? That is du: explain-du.

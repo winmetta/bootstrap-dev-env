@@ -1,0 +1,26 @@
+uv: fast Python package, project and tool manager (a modern pip + venv + pipx in one). Installed with mise.
+
+uv --version                                  # which version is installed (update it with mise upgrade uv, not uv self update)
+uv init myproject                             # new project: pyproject.toml, .python-version and a starter script (uv init does it in the current folder)
+uv add requests                               # add a dependency: edits pyproject.toml, updates uv.lock and installs it into .venv
+uv add --dev pytest                           # add a development-only dependency
+uv remove requests                            # remove a dependency
+uv sync                                       # make .venv match uv.lock exactly (run after cloning a project)
+uv lock                                       # re-resolve and rewrite uv.lock without installing
+uv run script.py                              # run a script inside the project's environment: no activating, uv syncs first
+uv run pytest                                 # run any tool the project depends on
+uv run --with rich script.py                  # run with an extra package for just this run (--with); nothing is added to the project
+uv add --script script.py requests            # put the dependency inside a single script (inline metadata), then uv run script.py works anywhere
+uv venv                                       # create a virtual environment in .venv (uv venv --python 3.12 picks the version)
+uv pip install requests                       # pip-compatible install into the active or .venv environment, much faster than pip
+uv pip install -r requirements.txt            # install from a requirements file
+uv pip list ; uv pip freeze                   # what is installed; the same as a requirements list
+uv tree                                       # the dependency tree of the project
+uv python list                                # Python versions uv knows about: installed and available to download
+uv python install 3.13                        # download and install a Python version (uv keeps its own, apart from mise's python)
+uv python pin 3.13                            # write .python-version so the project uses that version (it must fit the project's requires-python)
+uv tool install ruff                          # install a command-line tool in its own environment (like pipx); uvx ruff runs one without installing
+uv tool list ; uv tool upgrade --all          # list installed tools; upgrade them all
+uv cache dir ; uv cache clean                 # where the download cache lives; empty it
+uv replaces pip, venv, pip-tools and pipx for most work. Run uvx for one-off tools: explain-uvx.
+MCP servers written in Python usually start with uvx: see explain-uvx.

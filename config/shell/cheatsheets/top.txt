@@ -1,0 +1,13 @@
+top: live view of what is using CPU and memory. q quits. (macOS flags; Linux differs, see the end.)
+
+top                                           # live list; press q to quit. Press o then type cpu or mem to change the sort order (macOS)
+top -o cpu                                    # start sorted by CPU use
+top -o mem                                    # start sorted by memory use
+top -o cpu -n 10                              # show only the first 10 processes (-n)
+top -l 1 -n 10 -o mem                         # log one sample (-l 1) and exit: good for scripts and pasting
+top -l 1 -s 0 | grep PhysMem                  # memory summary line: used, wired, unused
+top -s 5                                      # refresh every 5 seconds (-s)
+top -pid 1234                                 # watch one process
+ps aux -r | head                              # no live view needed? ps sorted by CPU, once (explain-ps)
+Activity Monitor is the graphical version (Spotlight: Activity Monitor).
+Linux top: P sorts by CPU, M by memory, k kills a process, 1 shows each CPU core; top -o %CPU on newer versions.

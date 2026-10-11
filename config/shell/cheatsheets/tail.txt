@@ -1,0 +1,12 @@
+tail and head: look at the end or the start of a file or stream.
+
+tail -n 50 app.log                            # the last 50 lines (head -n 50: the first 50)
+tail -f app.log                               # follow: keep printing new lines as they are written; Ctrl-C stops
+tail -F app.log                               # like -f, but keeps going if the log is rotated or recreated
+tail -f app.log | rg --line-buffered ERROR    # follow a log and show only errors (--line-buffered prints at once)
+tail -n +2 data.csv                           # everything from line 2 on: skip a header line
+head -n 1 data.csv                            # just the first line (the header)
+head -c 100 file                              # the first 100 bytes
+head -n 20 file | tail -n 5                   # lines 16 to 20: combine them
+less +F app.log                               # follow mode inside less: Ctrl-C to scroll, F to follow again, q to quit
+bat file | head                               # the first lines with highlighting (explain-bat)

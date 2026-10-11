@@ -1,0 +1,14 @@
+bat: cat with syntax highlighting, line numbers, git change markers and paging.
+
+bat file.sh                                   # view a file; long files open in a pager (q to quit, / to search)
+bat -p file.sh                                # plain (-p): no line numbers or borders, handy for copying
+bat -pp file.sh                               # plain and no pager: behaves like cat
+bat -n file                                   # line numbers only (-n)
+bat -r 10:20 file                             # only lines 10 to 20 (--line-range)
+bat -l json                                   # force a language, e.g. for stdin:  curl -s URL | bat -l json
+bat -A file                                   # show invisible characters: tabs, line endings, trailing spaces
+bat --diff file                               # mark lines changed compared with git
+bat a.txt b.txt                               # several files, each with a header
+bat --list-languages                          # every supported language
+bat --list-themes                             # available colour themes; pick one with --theme=<name> or the BAT_THEME variable
+fzf --preview 'bat --color=always {}'         # use bat as the preview pane in fzf

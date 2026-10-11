@@ -1,0 +1,13 @@
+tree: draw a folder as a tree. The aliases tree2, tree3, treea, treed and treeg are shortcuts (explain-aliases).
+
+tree -L 2                                     # limit the depth to 2 levels (alias: tree2)
+tree -a -I '.git|node_modules'                # include hidden files but skip some names (-I); alias treea
+tree -d -L 2                                  # folders only (-d); alias treed
+tree --gitignore                              # skip whatever .gitignore ignores; alias treeg
+tree -h                                       # show file sizes in human-readable form
+tree -D                                       # show the last-modified date of each entry
+tree -f                                       # print the full path of each entry (good for copying)
+tree -P '*.md'                                # only files matching a pattern (-P); add --prune to hide empty folders
+tree --dirsfirst                              # list folders before files
+tree -J                                       # JSON output, for scripts (pipe to jq)
+tree src                                      # a different folder than the current one

@@ -1,0 +1,14 @@
+ps: a snapshot of running processes (top is the live view).
+
+ps aux                                        # every process with its user, CPU %, memory %, state and command
+ps -ef                                        # another full listing, with parent pid (PPID)
+ps aux | head                                 # the first few lines: the header names the columns
+ps aux -r | head                              # sorted by CPU use, highest first (macOS: -r; Linux: ps aux --sort=-%cpu)
+ps aux -m | head                              # sorted by memory use (macOS: -m; Linux: ps aux --sort=-%mem)
+pgrep -fl node                                # find processes by name (-l prints the name, -f matches the whole command line)
+pgrep -f 'vite'                               # just the pids of processes whose command line contains vite
+ps -p 1234 -o pid,ppid,etime,command          # details for one pid: etime = how long it has been running
+ps -ax -o pid,%cpu,%mem,command | head        # choose your own columns (-o)
+ps -o ppid= -p 1234                           # just the parent pid of a process
+lsof -i :3000                                 # which process is using a port (see explain-lsof)
+Stop a process: explain-kill. Find a pid first with pgrep, or Activity Monitor.

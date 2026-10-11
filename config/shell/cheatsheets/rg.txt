@@ -1,0 +1,23 @@
+rg (ripgrep): fast text search. Skips .gitignore'd files, hidden files, binaries and .git.
+
+rg TODO                                       # every line containing TODO, in all files under the current folder
+rg TODO .                                     # in scripts, CI and pipes always give a path: with no path, rg reads stdin when input is not a terminal and can wait forever
+rg -i todo                                    # ignore case (-i); -S = smart case: ignore case unless you type a capital
+rg -w foo                                     # whole word only (matches foo, not foobar)
+rg -F 'a.b(c)'                                # fixed string (-F): no regex, so . ( ) are plain characters
+rg -n -C 2 error                              # line numbers (-n) plus 2 lines of context around each hit (-C 2)
+rg -l TODO                                    # only list the names of files that match (-l)
+rg -c TODO                                    # count of matching lines per file (-c)
+rg --files-without-match TODO                 # files that do NOT contain it
+rg TODO -g '*.md'                             # only files matching a glob (-g)
+rg TODO -g '!node_modules'                    # skip files or folders: a glob starting with !
+rg -t sh 'set -e'                             # only one file type (sh, md, py, ...); list them with: rg --type-list
+rg -T md TODO                                 # everything except one file type (-T)
+rg -u secret                                  # also search .gitignore'd files; -uu adds hidden files, -uuu adds binaries
+rg 'foo|bar'                                  # regex alternation: lines with foo OR bar
+rg -U 'start\n.*end'                          # multi-line match (-U): a pattern that spans lines
+rg 'v(\d+)\.(\d+)' -r 'v$1_$2'                # print lines with replaced text (-r); does NOT edit the files (use sd for that)
+rg -o 'https?://[^ )]+'                       # print only the matching part (-o), e.g. every URL
+rg --stats TODO                               # add a summary: how many matches, files and how long it took
+rg --json TODO | jq .                         # machine-readable output for scripts
+rg TODO | fzf                                 # pick one result interactively

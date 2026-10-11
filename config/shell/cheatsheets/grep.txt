@@ -1,0 +1,16 @@
+grep: search text in files. (rg is faster and friendlier: explain-rg; grep is on every machine.)
+
+grep -rn TODO .                               # search a folder recursively (-r) and show line numbers (-n)
+grep -i todo file                             # ignore case
+grep -v debug file                            # invert: lines that do NOT match
+grep -E 'foo|bar' file                        # extended regex (-E): alternation, +, ?, ()
+grep -w word file                             # whole word only
+grep -c error app.log                         # count of matching lines
+grep -l TODO *.md                             # only the names of files that match
+grep -C 2 error app.log                       # 2 lines of context around each match (-A after, -B before)
+grep -rn TODO . --include='*.md'              # limit to some files
+grep -rn TODO . --exclude-dir=node_modules --exclude-dir=.git
+                                              # skip folders
+grep -o 'https\?://[^ ]*' file                # print only the matching part
+ps aux | grep node                            # filter another command's output (it also matches the grep itself; pgrep -fl is cleaner)
+macOS grep (BSD) has no -P (Perl regex); use -E, or rg, which supports more.

@@ -1,0 +1,20 @@
+jq: read, filter and reshape JSON on the command line.
+
+jq . file.json                                # pretty-print (and validate) a file
+curl -s URL | jq .                            # pretty-print JSON from the network
+jq '.name' file.json                          # one field
+jq -r '.name' file.json                       # raw string: no quotes (-r), good for use in scripts
+jq '.items[]' file.json                       # every element of an array
+jq '.items[].id' file.json                    # one field from each element
+jq '.items | length' file.json                # count the elements
+jq '.items[] | select(.active == true)' file.json
+                                              # keep only elements that match a condition
+jq '[.items[] | {id, name}]' file.json        # build a new array with only the fields you want
+jq -c '.items[]' file.json                    # compact: one JSON value per line (-c)
+jq 'keys' file.json                           # list the top-level keys
+jq -s . a.json b.json                         # slurp (-s): combine several inputs into one array
+jq --arg n x '.name = $n' file.json           # set a value from the shell; prints the result, does not edit the file
+jq -e '.ok' file.json                         # exit status 1 when the result is false or null (-e), for use in scripts
+gh api repos/<owner>/<repo> | jq '{name, private}'
+                                              # pick fields from a GitHub API response
+jq . f.json > f.tmp && mv f.tmp f.json        # edit a file: write to a temp file, then replace it

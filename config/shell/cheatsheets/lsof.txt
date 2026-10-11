@@ -1,0 +1,11 @@
+lsof: list open files, which includes network ports. Mostly used to answer 'who is using port 3000?'
+
+lsof -i :3000                                 # which process has port 3000 open
+lsof -iTCP -sTCP:LISTEN -P -n                 # every program listening for TCP connections (-P: show port numbers, -n: skip DNS lookups)
+lsof -ti :3000                                # just the pid(s), for scripts: lsof -ti :3000 | xargs kill
+lsof -p 1234                                  # all files and sockets one process has open
+lsof -c node                                  # everything opened by processes whose command starts with node
+lsof -u $USER                                 # everything opened by your user
+lsof path/to/file                             # which process has this file open (why a disk will not eject)
+lsof -i -P -n | head                          # all network connections, numeric
+On macOS you may need sudo to see other users' processes. Stopping the process: explain-kill.

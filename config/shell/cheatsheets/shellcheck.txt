@@ -1,0 +1,13 @@
+shellcheck: finds bugs and bad practice in shell scripts.
+
+shellcheck script.sh                          # check a script
+shellcheck -s bash script.sh                  # say which shell (sh, bash, dash, ksh); needed when the file has no #! line
+shellcheck -x script.sh                       # also follow files the script sources (-x)
+shellcheck -e SC2086 script.sh                # ignore one rule everywhere (-e)
+shellcheck -S warning script.sh               # show only warnings and errors (-S: error, warning, info, style)
+shellcheck -f gcc script.sh                   # other output formats: gcc, json, checkstyle, diff
+shellcheck -f diff script.sh | git apply      # apply the automatic fixes it can suggest
+shellcheck *.sh                               # many files at once
+# shellcheck disable=SC2034                   # put this comment above a line in a script to silence one rule there, and say why
+Look up any code, for example https://www.shellcheck.net/wiki/SC2086
+Git hooks run it on staged *.sh files (see explain-lefthook).

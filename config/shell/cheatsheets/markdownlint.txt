@@ -1,0 +1,12 @@
+markdownlint-cli2: checks Markdown for style problems. Rules live in .markdownlint.json.
+
+markdownlint-cli2 README.md                   # check one file
+markdownlint-cli2 '**/*.md'                   # check every Markdown file (quote the glob so the tool expands it)
+markdownlint-cli2 '**/*.md' '#node_modules'   # skip a folder: a pattern starting with # is excluded
+markdownlint-cli2 --fix README.md             # repair the problems it can fix automatically
+markdownlint-cli2 --config .markdownlint.json README.md
+                                              # use a specific config file
+<!-- markdownlint-disable MD013 -->           # put this comment in a file to turn one rule off from there on (enable again with -enable-)
+<!-- markdownlint-disable-next-line MD033 --> # turn a rule off for just the next line
+Rule names such as MD013 are explained at https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+Pair it with prettier: markdownlint checks style, prettier formats (explain-prettier).

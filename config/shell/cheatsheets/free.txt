@@ -1,0 +1,12 @@
+free: memory use. macOS has NO free command; these are the macOS equivalents (Linux free is at the end).
+
+vm_stat                                       # memory pages by state: free, active, inactive, wired, compressed (a page is 16 KB on Apple silicon)
+memory_pressure                               # overall verdict: how much memory is free and whether the system is under pressure
+top -l 1 -s 0 | grep PhysMem                  # one summary line: PhysMem used (wired, compressor), unused
+sysctl -n hw.memsize                          # total installed memory in bytes
+sysctl -n hw.memsize | awk '{printf "%.1f GB\n", $1/1073741824}'
+                                              # total memory in GB
+top -l 1 -n 10 -o mem                         # the processes using the most memory
+ps aux -m | head                              # same list with ps, sorted by memory
+Linux: free -h (human-readable), free -m (MB), free -h -s 2 (repeat every 2 seconds).
+Do not worry about low 'free' memory on macOS: it keeps spare memory as cache. Watch memory pressure instead.

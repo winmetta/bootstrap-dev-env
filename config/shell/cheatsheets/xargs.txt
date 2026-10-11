@@ -1,0 +1,11 @@
+xargs: turn lines of input into arguments for another command.
+
+fd -e md | xargs wc -l                        # run wc -l once with all the Markdown files as arguments
+echo a b c | xargs -n 1 echo                  # one argument per run (-n 1)
+fd -e png | xargs -I{} cp {} /tmp/            # put each item where {} is (-I{}): runs once per item
+fd -e md | xargs -P 4 -n 1 prettier --check   # run up to 4 at a time in parallel (-P)
+fd -0 -e md | xargs -0 ls -l                  # NUL-separated (-0) is safe for names with spaces; pair with fd -0 or find -print0
+fd -e tmp | xargs -p echo                     # ask before each run (-p)
+git branch --merged | xargs git branch -d     # a real example: delete merged branches (read the list first)
+lsof -ti :3000 | xargs kill                   # free a port: kill the process on it
+macOS xargs does nothing on empty input; GNU xargs needs -r for that. fd -x does the same job for files.

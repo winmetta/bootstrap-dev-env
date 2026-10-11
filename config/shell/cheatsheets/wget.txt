@@ -1,0 +1,14 @@
+wget: download files from the web. (macOS also has curl: curl -fsSLO URL is the same as wget URL.)
+
+wget URL                                      # download into the current folder, named after the URL
+wget -O out.zip URL                           # choose the file name (-O); -O - writes to the terminal instead
+wget -P ~/Downloads URL                       # save into a folder (-P)
+wget -c URL                                   # continue an interrupted download (-c)
+wget -q URL                                   # quiet (-q); -nv prints just errors and one line
+wget -i urls.txt                              # download every URL listed in a file
+wget --header='Authorization: Bearer TOKEN' URL
+                                              # send a header, e.g. an API token (do not paste real tokens in shared history)
+wget --spider URL                             # check that a URL exists without downloading it
+wget -S --spider URL                          # also show the response headers
+wget -qO- URL | bat -l json                   # print to stdout, like curl -s, and view it
+wget -r -np -l 2 URL                          # recursive (-r), never to the parent folder (-np), 2 levels deep (-l)

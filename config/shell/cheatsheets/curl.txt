@@ -1,0 +1,18 @@
+curl: make HTTP requests from the terminal. (wget is the alternative: explain-wget)
+
+curl URL                                      # GET a URL and print the body
+curl -fsSL URL                                # the usual flags: fail on HTTP errors (-f), silent (-s) but show errors (-S), follow redirects (-L)
+curl -fsSLO URL                               # save with the remote file name (-O), or choose it with -o out.zip
+curl -I URL                                   # headers only (a HEAD request)
+curl -s -o /dev/null -w '%{http_code}\n' URL  # just the HTTP status code
+curl -X POST URL -H 'Content-Type: application/json' -d '{"a":1}'
+                                              # POST JSON
+curl -d @body.json -H 'Content-Type: application/json' URL
+                                              # POST the contents of a file (@file)
+curl -H "Authorization: Bearer $TOKEN" URL    # send a header; keep tokens in environment variables, not in the command text
+curl --retry 3 --max-time 10 URL              # retry on failure; give up after 10 seconds
+curl -v URL                                   # verbose: show the request and response headers (debugging)
+curl -s URL | jq .                            # pretty-print a JSON answer (explain-jq)
+curl -L -o /dev/null -s -w '%{url_effective}\n' URL
+                                              # where a redirect finally ends up
+Avoid -k (skip TLS checks). Never run curl ... | sh unless you trust the source and have read the script.

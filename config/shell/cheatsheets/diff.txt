@@ -1,0 +1,14 @@
+diff: compare two files or folders. (git diff --no-index is nicer when you have git.)
+
+diff -u a.txt b.txt                           # unified format: the one patches and git use, with 3 lines of context
+diff -r dir1 dir2                             # compare two folders recursively
+diff -rq dir1 dir2                            # only say which files differ (-q), no details
+diff -y a.txt b.txt                           # side by side (-y)
+diff <(sort a.txt) <(sort b.txt)              # compare the output of two commands (process substitution: bash and zsh)
+git diff --no-index a.txt b.txt               # colourful word-aware diff using git, for files outside a repo
+git diff --no-index --stat dir1 dir2          # a summary of differing files and line counts
+vim -d a.txt b.txt                            # interactive side-by-side in vim (]c next change, do/dp take or give a change)
+diff -u old new > fix.patch ; patch -p0 < fix.patch
+                                              # make a patch file, then apply it
+cmp a.bin b.bin                               # are two binary files identical? (exit status 0 if so)
+Exit status: 0 = same, 1 = different, 2 = trouble. Handy in scripts.

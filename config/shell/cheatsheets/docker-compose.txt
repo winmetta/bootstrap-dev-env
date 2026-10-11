@@ -1,0 +1,25 @@
+docker compose: run several containers described in one compose.yaml. Same as docker-compose (also explain-compose).
+
+docker compose up                             # create and start everything in compose.yaml, showing the logs; Ctrl-C stops it
+docker compose up -d                          # start in the background (-d)
+docker compose up -d --build                  # rebuild images first, then start
+docker compose up -d --force-recreate         # recreate containers even if nothing changed
+docker compose ps                             # the project's containers and their state; ps -a includes stopped ones
+docker compose logs -f web                    # follow the logs of one service (leave the name off for all)
+docker compose exec web sh                    # a shell inside a running service
+docker compose run --rm web npm test          # run a one-off command in a new container of a service, then remove it
+docker compose stop ; docker compose start    # stop and start without removing the containers
+docker compose restart web                    # restart one service
+docker compose down                           # stop and remove the containers and networks (volumes stay)
+docker compose down -v                        # also remove the named volumes: your database data goes too. Destructive: agents confirm first
+docker compose build                          # build the images only; docker compose pull downloads the ones that are not built
+docker compose config                         # validate compose.yaml and print it with variables filled in; works without a running engine
+docker compose config --services              # just the service names
+docker compose -f compose.yaml -f compose.dev.yaml up
+                                              # combine files: later files override earlier ones (-f)
+docker compose -p myproject up -d             # name the project, so two copies do not clash (-p)
+docker compose --profile debug up             # start the services tagged with a profile too (--profile)
+docker compose top                            # the processes running in each container
+docker-compose up -d                          # the standalone command: identical to docker compose, which mise's docker-compose also provides as a CLI plugin
+File name: compose.yaml (preferred) or docker-compose.yml, in the project folder. Variables come from the shell or a .env file.
+Needs a running engine: colima start (explain-colima). One-off containers: explain-docker.

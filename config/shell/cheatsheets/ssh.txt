@@ -1,0 +1,24 @@
+ssh: log in to another machine or run commands there. Agents must ask before running anything over SSH.
+
+ssh user@host                                 # log in (the first time it asks you to trust the host: check the fingerprint)
+ssh -p 2222 user@host                         # a different port (-p; scp uses a capital -P)
+ssh -i ~/.ssh/id_ed25519 user@host            # use a specific key (-i)
+ssh user@host 'uptime'                        # run one command and come back
+ssh user@host 'cd app && git pull'            # quote the whole remote command so your shell does not split it
+ssh -L 8080:localhost:80 user@host            # local forward: http://localhost:8080 reaches port 80 on the remote side
+ssh -R 9000:localhost:3000 user@host          # remote forward: the server's port 9000 reaches YOUR port 3000
+ssh -D 1080 user@host                         # SOCKS proxy on localhost:1080 that sends traffic through the server
+ssh -N -f -L 5432:db:5432 user@host           # tunnel only (-N: no shell), pushed into the background (-f)
+ssh -J jump@bastion user@host                 # go through a jump host (-J)
+ssh -v user@host                              # debug a connection: -v, then -vv or -vvv for more detail
+ssh -G myserver                               # print the settings ssh would use for a host name (reads ~/.ssh/config)
+ssh -T git@github.com                         # test your GitHub key: should say you have successfully authenticated
+ssh -o ServerAliveInterval=30 user@host       # keep an idle session from being dropped (-o sets any config option)
+~.                                            # type Enter, then ~ then . to kill a frozen session
+Shortcuts live in ~/.ssh/config, then you just type: ssh myserver
+    Host myserver
+        HostName 203.0.113.10
+        User me
+        IdentityFile ~/.ssh/id_ed25519
+        ProxyJump bastion
+Related: explain-ssh-keygen (make keys), explain-ssh-copy-id (install a key), explain-ssh-add (agent), explain-scp, explain-rsync.

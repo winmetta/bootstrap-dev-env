@@ -1,0 +1,27 @@
+pulumi: infrastructure as code. up, destroy and refresh change REAL infrastructure: agents confirm with the user first (AGENTS.md).
+
+pulumi version ; pulumi about                 # the CLI version; versions of the CLI, language host and plugins (paste this in a bug report)
+pulumi login                                  # choose where state is stored: Pulumi Cloud by default
+pulumi login --local                          # keep state in files on this machine (also: pulumi login s3://bucket); pulumi whoami shows the backend and user
+pulumi new aws-typescript                     # start a project from a template; pulumi new alone lists them
+pulumi stack init dev                         # create a stack: one deployment of the project (dev, staging, prod)
+pulumi stack ls                               # list stacks; pulumi stack select dev switches (select --create makes it if missing)
+pulumi config set aws:region eu-west-1        # set a configuration value for the current stack
+pulumi config set --secret dbPassword VALUE   # store a secret encrypted; plain config shows in the stack file
+pulumi config                                 # show the stack's configuration (secrets are hidden unless you add --show-secrets)
+pulumi preview                                # show what WOULD change, and change nothing. Always run it before up
+pulumi preview --diff                         # a detailed, line-by-line view of each change
+pulumi up                                     # apply the plan: shows a preview, then asks you to confirm before changing anything
+pulumi up --yes                               # apply without asking: do not use it unless the preview was already reviewed (and agents: not at all unless asked)
+pulumi up --target URN                        # update only one resource (--target); use sparingly, it can leave the stack inconsistent
+pulumi refresh --preview-only                 # check what drifted between the stack's state and the real cloud, changing nothing
+pulumi refresh                                # update the state to match the real cloud (after someone changed things by hand)
+pulumi destroy --preview-only                 # show what destroy would delete, changing nothing
+pulumi destroy                                # DELETE every resource in the stack. Cannot be undone; preview first
+pulumi stack rm dev                           # remove an empty stack from the backend once it is destroyed (--force if it still has resources: state is lost)
+pulumi stack output                           # the stack's outputs (urls, ids); add --json for scripts, --show-secrets to reveal secret ones
+pulumi stack export > state.json              # back up the stack state; pulumi stack import < state.json restores it
+pulumi logs --follow                          # follow resource logs for providers that support it
+pulumi cancel                                 # cancel an update that is stuck or was interrupted (releases the lock)
+Typical loop: pulumi preview, read it, pulumi up, check the outputs. State and secrets live in the backend, not in git.
+TypeScript projects need Node (mise installs it). Credentials for the cloud come from the usual place: see explain-aws.

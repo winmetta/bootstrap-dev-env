@@ -1,0 +1,26 @@
+npm: Node's package manager. Comes with Node, which mise installs and versions.
+
+npm init -y                                   # create a package.json with defaults
+npm install                                   # install everything in package.json (and write package-lock.json)
+npm ci                                        # clean install exactly from package-lock.json: for CI and reproducible builds; deletes node_modules first
+npm install lodash                            # add a dependency (npm i is the short form); it is saved in package.json
+npm install --save-dev prettier               # add a development-only dependency (-D)
+npm uninstall lodash                          # remove a dependency
+npm run                                       # list the scripts in package.json; npm run <name> runs one (npm test, npm start need no run)
+npm run build                                 # run the build script
+npm ls --depth=0                              # the dependencies you asked for, without their dependencies
+npm ls lodash                                 # why is a package installed? shows who depends on it
+npm outdated                                  # dependencies with newer versions (exit status 1 if any)
+npm update                                    # move dependencies to the newest versions the version ranges allow
+npm audit                                     # check dependencies for known vulnerabilities; npm audit fix applies safe upgrades
+npm view prettier version                     # the latest published version of a package (the source of truth for versions)
+npm view prettier dist-tags                   # named versions: latest, next, ...
+npm pack --dry-run                            # list what would be in the package without creating it
+npm config get registry                       # which registry npm talks to
+npm run build -w apps/web                     # in a workspaces monorepo: run a script in one workspace (-w)
+npm install lodash -w apps/web                # add a dependency to one workspace
+npm run test --workspaces --if-present        # run a script in every workspace that has it
+npx <tool>                                    # run a package's command without installing it (explain-npx)
+Global installs: avoid npm install -g. Use mise (mise use -g npm:<package>) so versions are tracked: explain-mise.
+Pin the Node version per repo with mise (mise use node@22); npm itself comes with that Node.
+npm publish releases a package publicly: outward-facing, so agents ask the user first.

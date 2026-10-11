@@ -1,0 +1,116 @@
+# Shared git settings and aliases. bootstrap.sh copies this to
+# ~/.config/git/bootstrap-dev-env.gitconfig and includes it at the top of ~/.gitconfig,
+# so anything you set later in ~/.gitconfig (or in a repo) overrides it.
+# A line starting with "#:" directly above a setting or alias is its description:
+# `explain-git-config` and `explain-git-aliases` print them. Other "#" lines are
+# plain comments.
+
+[init]
+	#: name of the first branch in a new repo (git still defaults to "master")
+	defaultBranch = main
+
+[core]
+	#: line endings: convert CRLF to LF when committing, leave files untouched on checkout (right for macOS; matches the shared .editorconfig)
+	autocrlf = input
+
+[pull]
+	#: git pull rebases your local commits onto the remote ones instead of creating a merge commit
+	rebase = true
+
+[push]
+	#: the first plain `git push` of a new branch creates the remote branch and sets it as upstream (no -u needed)
+	autoSetupRemote = true
+
+[fetch]
+	#: git fetch and pull drop remote-tracking branches that were deleted on the remote
+	prune = true
+
+[rebase]
+	#: stash uncommitted changes before a rebase and restore them afterwards, so rebasing never refuses on a dirty tree
+	autoStash = true
+
+[rerere]
+	#: "reuse recorded resolution": git remembers how you resolved a conflict and applies the same fix if it comes up again (helps with repeated rebases)
+	enabled = true
+
+[merge]
+	#: conflict markers also show the original version (common ancestor) between yours and theirs, which makes conflicts easier to resolve
+	conflictStyle = zdiff3
+
+[diff]
+	#: use the histogram algorithm, which gives cleaner, more readable diffs than the default in most cases
+	algorithm = histogram
+
+[branch]
+	#: git branch lists the most recently committed-to branches first instead of alphabetically
+	sort = -committerdate
+
+[alias]
+	# A line starting with "#:" directly above an alias is its description, shown
+	# by `explain-git-aliases`. Other "#" lines are plain comments.
+
+	# --- Status and branches ---
+	#: short status with the branch and ahead/behind counts
+	st = status -sb
+	#: list local branches with their upstream and last commit
+	br = branch -vv
+	#: shorthand for checkout
+	co = checkout
+	#: shorthand for switch (change branches)
+	sw = switch
+	#: switch to main and fast-forward it from origin (never creates a merge commit)
+	main = !git switch main && git pull --ff-only
+
+	# --- Commits ---
+	#: shorthand for commit
+	ci = commit
+	#: add staged changes to the last commit, keeping its message (needs fp if already pushed)
+	amend = commit --amend --no-edit
+	#: undo the last commit but keep its changes staged
+	undo = reset --soft HEAD~1
+	#: remove files from the staging area without touching your edits
+	unstage = restore --staged
+	#: stage everything and commit it as "chore: wip", a throwaway save point (the message passes the Conventional Commits hook)
+	wip = !git add -A && git commit -m 'chore: wip'
+
+	# --- History ---
+	#: show the last commit with the files it changed
+	last = log -1 --stat
+	#: compact log, one line per commit: hash, date, branch labels, subject, relative time and author (like git log, shorter)
+	ls = "log --abbrev-commit --date=short --pretty=tformat:'%C(yellow)%h%C(reset) %C(green)%ad%C(reset)%C(red)%d%C(reset) %s %C(green)(%cr)%C(reset) %C(bold blue)<%an>%C(reset)'"
+	#: detailed log: full commit info (hash, author, date, message) plus the files changed in each commit
+	ll = log --stat --decorate --date=iso
+	#: compact graph of the last 20 commits on this branch
+	lg = log --graph --oneline --decorate -20
+	#: compact graph of every branch
+	lga = log --graph --oneline --decorate --all
+
+	# --- Diff ---
+	#: unstaged changes (what git add would stage)
+	d = diff
+	#: staged changes (what the next commit will contain)
+	ds = diff --staged
+	#: changes since the last commit, staged and unstaged together
+	dh = diff HEAD
+	#: diff highlighted word by word, easier to read for prose and long lines
+	dw = diff --word-diff
+	#: summary of changed files with line counts instead of the full diff
+	dst = diff --stat
+	#: everything this branch changes compared with where it split from main (what a PR would show)
+	dm = diff main...HEAD
+	#: only the names and status (A added, M modified, D deleted) of files this branch changes versus main
+	dfiles = diff --name-status main...HEAD
+
+	# --- Remote ---
+	#: force-push safely: refuses if someone else pushed to the branch since you last fetched
+	fp = push --force-with-lease
+	#: push the current branch and set its upstream (first push of a new branch)
+	pushu = push -u origin HEAD
+	#: fetch, drop deleted remote branches, then rebase your branch onto origin/main
+	sync = !git fetch --prune && git rebase origin/main
+
+	# --- Cleanup ---
+	#: list local branches whose remote branch is gone (usually deleted after the PR was squash-merged); safe to delete
+	gone = "!git branch -vv | awk '/: gone]/{print $1}'"
+	#: delete local branches already merged into main (squash-merged ones are not detected; use gone)
+	cleanup = "!git branch --merged main | grep -v -E '(^\\*|main)' | xargs git branch -d"

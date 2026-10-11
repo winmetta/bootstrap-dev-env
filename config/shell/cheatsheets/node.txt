@@ -1,0 +1,18 @@
+node and npm: JavaScript runtime (mise installs the latest LTS globally; repos pin their own).
+
+node --version ; npm --version                # which versions run
+node script.js                                # run a script
+node -e 'console.log(1 + 1)'                  # run a one-liner (-e)
+node -p '2 ** 10'                             # evaluate and print the result (-p)
+node                                          # interactive prompt (REPL); Ctrl-D leaves
+npm init -y                                   # create a package.json with defaults
+npm install                                   # install the dependencies from package.json / package-lock.json
+npm ci                                        # clean install exactly from package-lock.json (CI, reproducible builds)
+npm install --save-dev prettier               # add a development-only dependency
+npm run                                       # list the scripts in package.json; npm run <name> runs one
+npm test                                      # run the test script
+npx <tool>                                    # run a package's command without installing it globally
+npm ls --depth=0                              # top-level dependencies only
+npm outdated                                  # dependencies with newer versions available
+mise use node@22                              # pin the Node version for this repo (see explain-mise)
+npm in detail: explain-npm. Running package commands without installing: explain-npx. Python equivalents: explain-uv, explain-uvx.

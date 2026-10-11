@@ -1,0 +1,42 @@
+# Starship config, copied to ~/.config/starship.toml by
+# bootstrap.sh when that file does not exist yet.
+# Docs: https://starship.rs/config/#git-status
+
+[git_status]
+# Show how many commits you are ahead of / behind the remote.
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+# Hide the stash indicator.
+stashed = ""
+
+# Green check when the repo is clean (no changes) and level with its upstream.
+# One `git status` call: with --branch it prints "# branch.ab +0 -0" only when an
+# upstream is set, and any other non-header line means local changes.
+[custom.git_synced]
+when = '[ "$(git status --porcelain=v2 --branch 2>/dev/null | grep -v "^# branch\.\(oid\|head\|upstream\)")" = "# branch.ab +0 -0" ]'
+symbol = "✓"
+format = "[$symbol]($style) "
+style = "bold green"
+shell = ["bash", "--noprofile", "--norc"]
+
+# Full path (e.g. ~/projects/my-repo) instead of only the repo folder name.
+# truncate_to_repo = false stops cutting the path at the git repo root;
+# truncation_length = 0 stops cutting long paths to a few folders.
+[directory]
+truncate_to_repo = false
+truncation_length = 0
+
+# Plain "$" instead of the default "❯" (green, or red after a failed command).
+# "\$" escapes starship's variable sigil; single quotes keep the backslash.
+[character]
+success_symbol = '[\$](bold green)'
+error_symbol = '[\$](bold red)'
+
+# Current time (24-hour, when the prompt was drawn), just before the "$".
+# Off by default: uncomment these lines to turn it on.
+# [time]
+# disabled = false
+# time_format = "%H:%M:%S"
+# format = "[$time]($style) "
+# style = "dimmed white"

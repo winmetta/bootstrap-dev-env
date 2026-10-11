@@ -1,0 +1,19 @@
+vim: terminal editor. Shared config: ~/.config/bootstrap-dev-env/.vimrc (leader key is the comma).
+
+vim file ; vim +42 file                       # open a file; open it at line 42
+vim -d a b                                    # side-by-side diff of two files
+i  /  Esc                                     # insert mode (type text)  /  back to normal mode
+:w  :q  :wq  ZZ                               # save; quit; save and quit; save and quit (shortcut)
+:q!                                           # quit and throw away changes
+:W                                            # save a file you do not own, through sudo (defined in the shared vimrc)
+:set mouse=a                                  # turn the mouse on for this session (the shared vimrc turns it off so you can select and copy text in the terminal)
+/text  then n / N                             # search forward; next / previous match
+:%s/old/new/gc                                # replace everywhere in the file, asking for each (c)
+dd  yy  p                                     # delete a line; copy a line; paste
+u  Ctrl-r  .                                  # undo; redo; repeat the last change
+v  V  Ctrl-v                                  # select by character, by line, by block
+gcc  /  gc (visual)                           # comment or uncomment a line / the selection (vim-commentary)
+cs"'  ds"  ysiw)                              # change surrounding " to ';  delete surrounding ";  wrap a word in ( ) (vim-surround)
+]<Space>  [<Space>                            # add a blank line below / above (vim-unimpaired); ]q [q move through the quickfix list
+:Copilot setup                                # sign in to GitHub Copilot once
+:help surround                                # built-in help for each plugin: surround, commentary, unimpaired, endwise

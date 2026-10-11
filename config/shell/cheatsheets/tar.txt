@@ -1,0 +1,14 @@
+tar: bundle and unpack archives. (macOS tar is bsdtar; these flags also work on Linux.)
+
+tar -czf out.tar.gz folder/                   # create (-c) a gzip-compressed (-z) archive file (-f) from a folder
+tar -xzf out.tar.gz                           # extract (-x) it into the current folder
+tar -xzf out.tar.gz -C /some/dir              # extract into another folder (-C)
+tar -tzf out.tar.gz                           # list what is inside without extracting (-t)
+tar -xzf out.tar.gz path/in/archive           # extract just one file or folder
+tar -czf out.tar.gz --exclude='node_modules' --exclude='.git' folder/
+                                              # leave things out
+tar -cf out.tar folder/                       # no compression (.tar); -j makes .tar.bz2, -J makes .tar.xz
+tar -xf out.tar.gz                            # extract: modern tar detects the compression itself, so -z is optional here
+zip -r out.zip folder/ ; unzip -l out.zip     # zip files: create (-r recursive); list contents
+unzip out.zip -d dest/                        # extract a zip into a folder
+Remember: the flags are letters stuck together; -f must come last and be followed by the file name.

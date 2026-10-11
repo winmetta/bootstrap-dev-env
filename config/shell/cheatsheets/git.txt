@@ -1,0 +1,26 @@
+git: version control. The shared aliases are in explain-git-aliases and settings in explain-git-config.
+
+git status -sb                                # short status with the branch name (alias: st)
+git diff                                      # unstaged changes (alias: d)
+git diff --staged                             # what the next commit will contain (alias: ds)
+git add -p                                    # stage changes piece by piece, answering y/n for each
+git commit -m 'feat: add x'                   # commit; messages follow Conventional Commits and a hook checks them
+git commit --amend --no-edit                  # fold staged changes into the last commit (alias: amend)
+git log --oneline --graph --decorate -20      # compact history (alias: lg; git ls is the one-line version)
+git log -p -- path/to/file                    # history of one file, with the changes
+git log -S'word'                              # commits that added or removed a word
+git blame -L 10,20 file                       # who last changed lines 10 to 20
+git switch -c my-branch                       # create a branch and switch to it
+git switch -                                  # back to the previous branch
+git restore file                              # discard unstaged edits to a file (cannot be undone)
+git restore --staged file                     # unstage a file but keep the edits (alias: unstage)
+git stash -u ; git stash pop                  # shelve all work including new files, then bring it back
+git fetch --prune                             # update remote info and drop deleted remote branches
+git rebase -i HEAD~3                          # edit, reorder or squash the last 3 commits (before you push)
+git push --force-with-lease                   # safe force-push after a rebase (alias: fp); plain --force is dangerous
+git reset --soft HEAD~1                       # undo the last commit, keep the changes staged (alias: undo)
+git reflog                                    # history of where HEAD has been: find 'lost' commits after a mistake
+git branch -vv                                # branches with their upstream and last commit (alias: br)
+git cherry-pick <sha>                         # copy one commit onto the current branch
+git clean -fdn                                # PREVIEW the untracked files git clean would delete (-n = dry run)
+git config --global --list --show-origin      # every setting and which file it comes from

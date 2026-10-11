@@ -1,0 +1,17 @@
+fd: find files and folders by name. Simple syntax; skips .gitignore'd and hidden files by default.
+
+fd readme                                     # names containing 'readme' (a regex; case-insensitive unless you type a capital)
+fd -e md                                      # by extension: every .md file; repeat -e for more (fd -e md -e sh)
+fd -t d src                                   # folders only (-t d); -t f files, -t l symlinks, -t x executables
+fd -H .env                                    # include hidden files (-H)
+fd -I dist                                    # include .gitignore'd files (-I); fd -HI for both
+fd -g '*.json'                                # glob instead of regex (-g)
+fd -p 'src/.*test'                            # match against the whole path, not just the name (-p)
+fd -d 2 config                                # at most 2 levels deep (-d)
+fd . ~/projects                               # search another folder: fd <pattern> <folder>  (the pattern . matches any name)
+fd -e sh -x shellcheck                        # run a command once per result (-x); the file is added as the last argument
+fd -e md -X wc -l                             # run ONE command with all results at once (-X)
+fd --changed-within 1d                        # modified in the last day (also: --changed-before 2weeks)
+fd -S +1m                                     # bigger than 1 MB (-S +1m); smaller: -S -10k
+fd -0 -e log | xargs -0 ls -l                 # NUL-separated output (-0) is safe for names with spaces
+fd | fzf                                      # pick one file from the list

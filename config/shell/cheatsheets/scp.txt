@@ -1,0 +1,16 @@
+scp: copy files over SSH. Good for one-off copies; rsync is better for folders you copy repeatedly.
+
+scp file.txt user@host:/path/                 # upload a file
+scp user@host:/path/file.txt .                # download a file into the current folder
+scp -r folder/ user@host:/path/               # copy a folder (-r)
+scp -P 2222 file.txt user@host:/path/         # port: a CAPITAL -P here (ssh uses lowercase -p)
+scp -i ~/.ssh/id_ed25519 file.txt user@host:/p/
+                                              # use a specific key (-i)
+scp -J jump@bastion file.txt user@host:/path/ # through a jump host (-J)
+scp -p file.txt user@host:/path/              # keep modification times and modes (-p)
+scp -C big.log user@host:/path/               # compress on the wire (-C): helps text, not already-compressed files
+scp -3 hostA:/path/f hostB:/path/f            # copy between two remote hosts, going through your machine (-3)
+scp myserver:/etc/hosts ./hosts.copy          # host names from ~/.ssh/config work (explain-ssh)
+scp file.txt other-folder/                    # also works between two local paths
+A path before the colon is the machine, after it is the file. Without a colon, it is a local path.
+Interrupted? scp starts over: use rsync -P to resume (explain-rsync). Agents must ask before copying over SSH.

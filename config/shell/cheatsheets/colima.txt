@@ -1,0 +1,26 @@
+colima: runs the Linux VM that contains the Docker engine on your Mac. Runs as YOUR user (no sudo, no Docker Desktop).
+
+colima start                                  # start the VM and the Docker engine (first start downloads an image; defaults: 2 CPUs, 2 GiB memory, 100 GiB disk)
+colima start --cpus 4 --memory 8 --disk 100   # choose resources; they apply when the VM is created, so restart or recreate to change them later
+colima status                                 # is it running? shows the runtime, architecture, CPUs, memory and the docker socket
+colima list                                   # every Colima profile and its state
+colima stop                                   # shut the VM down (containers stop; images and volumes stay on its disk)
+colima restart                                # stop and start again
+colima ssh                                    # open a shell inside the Linux VM
+colima ssh -- docker ps                       # run one command inside the VM
+colima start --arch x86_64                    # run an Intel (amd64) VM on Apple silicon: slower, for images that only exist for amd64
+colima start --vz-rosetta                     # run amd64 containers on an Apple-silicon VM using Rosetta (faster than a full Intel VM)
+colima start --mount ~/work:w                 # share a folder with the VM; ':w' makes it writable (shared folders are read-only otherwise)
+colima start --edit                           # open the configuration file before starting; colima template edits the defaults for new profiles
+colima start --profile work                   # a separate VM with its own settings and its own docker context (docker context ls)
+colima start --kubernetes                     # also start a single-node Kubernetes (k3s) cluster
+colima start --runtime containerd             # use containerd instead of Docker; then use colima nerdctl ...
+colima start --network-address                # give the VM its own reachable IP; this may ask for sudo once to set up networking
+colima update                                 # update the container runtime inside the VM
+colima delete                                 # DESTROY the VM with its images, containers and volumes. Cannot be undone; agents confirm first
+colima version                                # versions of Colima and the Lima layer under it (mise manages both)
+docker context ls ; docker context use colima # docker talks to Colima through a context; use switches which engine the docker command uses
+echo $DOCKER_HOST                             # if set, it overrides the context: unset it when docker cannot find the engine
+Start it once per login: colima start. docker commands fail with 'Cannot connect to the Docker daemon' while it is stopped.
+The Docker socket is under ~/.colima/default/, owned by your user. dockerd runs as root only inside the VM.
+Related: explain-docker, explain-docker-compose.

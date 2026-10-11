@@ -1,0 +1,5 @@
+# Optional tools, installed with --containers: containers without Docker Desktop.
+docker-cli:docker
+docker-compose:docker-compose
+colima:colima
+lima:limactl

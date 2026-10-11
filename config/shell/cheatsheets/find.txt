@@ -1,0 +1,16 @@
+find: the classic way to search for files by name, type, age or size. (fd is simpler: explain-fd)
+
+find . -name '*.md'                           # files by name pattern (quote the pattern so the shell does not expand it)
+find . -iname 'readme*'                       # ignore case (-iname)
+find . -type f                                # only files (-type d: folders, -type l: symlinks)
+find . -maxdepth 2 -type d                    # folders at most 2 levels down (put -maxdepth before other tests)
+find . -mtime -1                              # modified in the last day (-mtime +7: more than a week ago)
+find . -size +10M                             # bigger than 10 MB (-size -1k: smaller than 1 KB)
+find . -not -path './node_modules/*' -name '*.js'
+                                              # skip a folder
+find . -name '*.log' -print                   # preview first: print what matches
+find . -name '*.sh' -exec shellcheck {} +     # run a command on the matches (+ passes many files to one run)
+find . -name '*.tmp' -exec rm {} \;           # run a command once per file; only after checking with -print (rm cannot be undone)
+find . -empty                                 # empty files and folders
+find . -print0 | xargs -0 ls -l               # NUL-separated names are safe with spaces (see explain-xargs)
+BSD find (macOS) needs a start folder: find . -name x. Prefer fd for everyday searching.

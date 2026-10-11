@@ -1,0 +1,15 @@
+uvx: run a Python command-line tool without installing it (short for uv tool run). Used by many MCP servers.
+
+uvx ruff --version                            # download ruff into a cached, isolated environment and run it; nothing is installed permanently
+uvx ruff check .                              # run a linter on this folder without adding it to the project
+uvx ruff@latest --version                     # force the newest version (tool@version also pins: uvx ruff@0.6.0)
+uvx --from 'ruff==0.6.0' ruff --version       # pin a version with --from when the package and the command have different names
+uvx --with rich httpie --version              # add extra packages next to the tool (--with)
+uvx --python 3.12 ruff --version              # run it on a specific Python version
+uvx --from git+https://github.com/org/repo tool
+                                              # run a tool straight from a git repository
+uvx --refresh ruff --version                  # ignore the cache and fetch again
+uv tool install ruff                          # keep it permanently on your PATH instead (explain-uv)
+uvx mcp-server-git --help                     # an MCP server from PyPI, the same way an MCP client starts it
+MCP client config for a uvx server:  { "command": "uvx", "args": ["mcp-server-git", "--repository", "/path/to/repo"] }
+uvx runs code downloaded from PyPI: use packages you trust, and pin versions for anything automated.

@@ -1,0 +1,11 @@
+lefthook: runs the git hooks listed in lefthook.yml (checks before each commit, message check).
+
+lefthook install                              # install the hooks into this clone; run after cloning or after editing lefthook.yml
+lefthook run pre-commit                       # run the pre-commit checks on staged files now, without committing
+lefthook run pre-commit --all-files           # run them on every file in the repo
+lefthook run pre-commit --command shellcheck  # run just one check (--command <name>)
+lefthook uninstall                            # remove the hooks from .git/hooks
+lefthook version                              # which version is installed
+git commit --no-verify                        # skip the hooks once. Fix the problem instead; agents must not use this unless asked
+Config: lefthook.yml in the repo root. A failing check prints its own error above the summary.
+Hooks need mise's tools on PATH, so commit from a terminal where mise is active.

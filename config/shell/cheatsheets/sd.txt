@@ -1,0 +1,12 @@
+sd: find and replace with regex, a friendlier sed. Same on macOS and Linux; edits files in place.
+
+sd -p 'old' 'new' file.txt                    # PREVIEW (-p): show what would change and change nothing. Try this first
+sd 'old' 'new' file.txt                       # replace in place: no -i, no backup suffix
+sd 'old' 'new' *.md                           # several files at once
+sd -F 'a.b' 'x' file.txt                      # fixed string (-F): . is a plain dot, not 'any character'
+sd '(\w+)@example\.com' '$1@example.org' f   # capture groups: $1, $2 ... in the replacement
+sd '\s+$' '' file.txt                         # remove trailing whitespace
+sd -f i 'todo' 'TODO' file.txt                # regex flags (-f): i = ignore case; also m, s, w
+echo 'a b' | sd ' ' '-'                       # also works as a filter: stdin in, stdout out
+fd -e md -x sd -p 'foo' 'bar'                 # preview a replace across every Markdown file; drop -p to apply it
+Replacements use $1, not \1 as in sed. Commit first, so git diff shows what sd changed.

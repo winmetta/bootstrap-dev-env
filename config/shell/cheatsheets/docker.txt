@@ -1,0 +1,37 @@
+docker: build and run containers. Needs an engine: start one with colima start (explain-colima).
+
+docker --version ; docker version             # client version; with a running engine, the server version too
+docker run --rm hello-world                   # run a container and remove it when it exits (--rm); the standard 'does it work?' test
+docker run -it --rm ubuntu bash               # an interactive shell in a throwaway container (-i keep input open, -t terminal)
+docker run -d --name web -p 8080:80 nginx     # run in the background (-d), name it, and publish container port 80 on localhost:8080 (-p host:container)
+docker run --rm -v "$PWD":/work -w /work node:22 npm test
+                                              # mount the current folder into the container (-v) and run from it (-w)
+docker run --rm -e KEY=value image            # set an environment variable (-e); --env-file .env loads a file of them
+docker run --platform linux/amd64 image       # force an architecture (Apple silicon runs arm64 by default; amd64 needs colima --vz-rosetta)
+docker ps                                     # running containers; docker ps -a includes stopped ones
+docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+                                              # pick your own columns with --format
+docker logs -f --tail 100 web                 # follow a container's output, starting with the last 100 lines
+docker exec -it web sh                        # open a shell inside a running container (use bash if the image has it)
+docker stop web ; docker start web            # stop gracefully; start again (docker restart web does both)
+docker rm web                                 # remove a stopped container; docker rm -f web also stops a running one first
+docker images                                 # local images; docker pull nginx downloads one; docker rmi nginx removes one
+docker build -t myapp .                       # build an image from the Dockerfile in this folder and tag it (-t name:tag)
+docker build -f docker/Dockerfile -t myapp .  # use a Dockerfile in another place (-f); the last argument is the build context folder
+docker build --no-cache --platform linux/amd64 -t myapp .
+                                              # ignore the layer cache; build for another architecture
+DOCKER_BUILDKIT=1 docker build -t myapp .     # use the modern BuildKit builder: the standalone docker CLI has no buildx plugin, so ask the engine for it
+docker tag myapp registry.example.com/myapp:1.0
+                                              # give an image another name, e.g. before pushing it
+docker login ; docker push registry.example.com/myapp:1.0
+                                              # sign in to a registry; upload an image (outward-facing: agents ask first)
+docker inspect --format '{{.NetworkSettings.IPAddress}}' web
+                                              # read one field of a container's details with a Go template
+docker cp web:/etc/nginx/nginx.conf .         # copy a file out of a container (the other direction works too)
+docker stats --no-stream                      # one snapshot of CPU and memory per container (without --no-stream it is live)
+docker volume ls ; docker network ls          # named volumes and networks
+docker system df                              # how much disk images, containers and volumes use
+docker system prune                           # remove stopped containers, unused networks and dangling images (-a: all unused images, --volumes: volumes too). Destructive: agents confirm first
+docker context ls                             # which engine this docker command talks to (colima when Colima is running)
+Compose (several containers from one file): explain-docker-compose. The engine itself: explain-colima.
+Pin image versions (node:22.11, not node:latest) for anything repeatable.

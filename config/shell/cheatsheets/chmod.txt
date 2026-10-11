@@ -1,0 +1,14 @@
+chmod: change who may read, write or run a file. ls -l shows the current permissions.
+
+chmod +x script.sh                            # make a script executable (so ./script.sh works)
+chmod 644 file                                # owner reads+writes, everyone else only reads (a normal file)
+chmod 755 file                                # owner reads+writes+runs, others read+run (a script or a folder)
+chmod 600 ~/.ssh/id_ed25519                   # owner only: required for private keys, ssh refuses keys others can read
+chmod u+w file                                # letters: u user (owner), g group, o others, a all; + adds, - removes, = sets
+chmod go-w file                               # remove write permission from group and others
+chmod -R u+rwX,go-w folder                    # recursive (-R); capital X adds execute only to folders and files already executable
+ls -l                                         # read the first column: -rwxr-xr-- means file, owner rwx, group r-x, others r--
+stat -f '%Lp %N' *                            # show permissions as numbers (macOS); Linux: stat -c '%a %n' *
+chown user:group file                         # change the owner and group (usually needs sudo)
+Numbers: r=4, w=2, x=1 and you add them: 7 = rwx, 6 = rw-, 5 = r-x, 4 = r--. Three digits = owner, group, others.
+Do not chmod -R 777 anything: it lets every user change the files.

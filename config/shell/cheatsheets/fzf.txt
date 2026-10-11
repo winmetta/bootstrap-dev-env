@@ -1,0 +1,16 @@
+fzf: fuzzy finder. Type a few letters of anything to filter a list.
+
+Ctrl-R                                        # fuzzy-search your shell history; Enter pastes the command, Ctrl-/ previews a long one
+Ctrl-T                                        # pick a file and paste its path at the cursor
+Alt-C                                         # pick a folder and cd into it (Option-C, or press Esc then C)
+fd -t f | fzf                                 # pick one file from a list
+fd -t f | fzf -m                              # pick several (-m): Tab marks, Enter accepts
+vim $(fzf)                                    # open the picked file in vim
+git branch --format='%(refname:short)' | fzf | xargs git switch
+                                              # pick a branch and switch to it
+fzf --preview 'bat --color=always {}'         # show the file's contents next to the list while you move
+fzf -q foo                                    # start with a query already typed (-q)
+fzf -e                                        # exact match instead of fuzzy (-e)
+fzf --height 40% --layout reverse             # short list under the prompt (already the default here)
+Inside fzf:  ^start  end$  'exact  !not  a | b   (anchors, exact word, exclude, or)
+Keys: Up/Down or Ctrl-J/K move, Enter accepts, Esc or Ctrl-C cancels.

@@ -1,0 +1,22 @@
+rsync: copy and sync files, sending only what changed. Works locally and over SSH.
+
+rsync -av src/ dest/                          # archive mode (-a: keep permissions, times, symlinks) and verbose (-v). Note the trailing slash
+rsync -av src dest/                           # WITHOUT the slash on src: creates dest/src (the folder itself is copied, not just its contents)
+rsync -avn src/ dest/                         # dry run (-n): list what WOULD happen and change nothing. Always try this first
+rsync -avz src/ user@host:/path/              # to a server, compressing in transit (-z)
+rsync -av user@host:/path/ dest/              # from a server
+rsync -avP big.iso user@host:/path/           # -P = progress + keep partial files, so an interrupted copy can resume
+rsync -av --delete src/ dest/                 # make dest an exact mirror: files missing from src are DELETED. Dry run (-n) first!
+rsync -av --exclude='node_modules' --exclude='.git' src/ dest/
+                                              # leave things out
+rsync -av --exclude-from=skip.txt src/ dest/  # exclusion patterns listed in a file
+rsync -avh --stats src/ dest/                 # human-readable sizes (-h) and a summary at the end
+rsync -avi src/ dest/                         # itemize (-i): one line per file saying what changed about it
+rsync -av --ignore-existing src/ dest/        # never overwrite files that already exist in dest
+rsync -avu src/ dest/                         # update (-u): skip files that are newer in dest
+rsync -av -e 'ssh -p 2222' src/ user@host:/p/ # choose the ssh command or its options: port, key (-e)
+rsync -av --bwlimit=1000 src/ user@host:/p/   # limit the speed (KB/s) so it does not saturate the link
+rsync -av --remove-source-files src/ dest/    # move instead of copy: delete each source file once it is copied
+The trailing slash on the SOURCE decides everything: src/ = its contents, src = the folder itself.
+macOS /usr/bin/rsync is Apple's openrsync (2.6.9-compatible): newer options such as --info=progress2 may be missing.
+Agents confirm with the user before syncing to or from a remote host (AGENTS.md: SSH) and before --delete, which removes files (a destructive operation).

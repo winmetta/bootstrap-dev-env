@@ -1,0 +1,15 @@
+awk: pick columns and do small calculations on text. Splits each line into fields $1 $2 ...
+
+awk '{print $1}' file                         # print the first column (fields split on whitespace)
+awk '{print $1, $NF}' file                    # first and last column ($NF = the last field)
+awk -F: '{print $1}' /etc/passwd              # split on a different separator (-F), here a colon
+awk -F, '{print $2}' data.csv                 # simple CSV (breaks if fields contain commas inside quotes)
+awk '$3 > 100' file                           # print the lines where column 3 is bigger than 100
+awk '/error/ {print $2}' app.log              # for lines matching a pattern, print column 2
+awk 'NR > 1' file                             # skip the first line (NR = line number)
+awk '{sum += $2} END {print sum}' file        # add up column 2 and print the total at the end
+awk '{c[$1]++} END {for (k in c) print k, c[k]}' file
+                                              # count how often each value in column 1 appears
+awk '{printf "%-10s %5d\n", $1, $2}' file     # formatted output, like printf
+ls -l | awk '{print $5, $NF}'                 # use it on any command's output: size and name
+macOS awk is the BSD one: no gensub or strftime. Use gawk if you need them.

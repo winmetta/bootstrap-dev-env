@@ -1,0 +1,50 @@
+# Git hooks for this repo, run by lefthook (https://lefthook.dev). bootstrap.sh
+# runs `lefthook install` here; to do it by hand: lefthook install
+# The hooks use the tools the bootstrap installs with mise (shellcheck, shfmt,
+# markdownlint-cli2, prettier, actionlint, gitleaks), so run git from a terminal where mise
+# is active. Skip them once with: git commit --no-verify. The CI workflow
+# (.github/workflows/ci.yml) runs the same checks on every pull request.
+
+pre-commit:
+  parallel: true
+  commands:
+    shellcheck:
+      glob: "*.sh"
+      run: shellcheck -s bash -x {staged_files}
+    shfmt:
+      glob: "*.sh"
+      run: shfmt -d {staged_files}
+    markdownlint:
+      glob: "*.md"
+      run: markdownlint-cli2 {staged_files}
+    prettier:
+      glob: "*.md"
+      # CLAUDE.md is a symlink to AGENTS.md and prettier refuses symlinks.
+      exclude: "CLAUDE.md"
+      run: prettier --check {staged_files}
+    # The iTerm profile must stay valid JSON, or iTerm silently ignores it.
+    json:
+      glob: "config/macos/iterm/*.json"
+      run: python3 -c 'import json, sys; [json.load(open(f)) for f in sys.argv[1:]]' {staged_files}
+    # Tool lists: every entry is "tool:command" (blank lines and # comments allowed).
+    tool-lists:
+      glob: "tools/*.txt"
+      run: |
+        ! grep -nvE '^(#.*|[^[:space:]:][^[:space:]]*:[^[:space:]:]+)?$' {staged_files}
+    # Lint GitHub Actions workflows (syntax, expressions, shell steps).
+    actionlint:
+      glob: ".github/workflows/*.{yml,yaml}"
+      run: actionlint {staged_files}
+    # Block commits that contain secrets (tokens, keys, passwords).
+    gitleaks:
+      run: gitleaks git --staged --redact
+
+# Commit messages follow Conventional Commits (see AGENTS.md):
+#   <type>(<optional scope>): <description>
+commit-msg:
+  skip:
+    - merge
+    - rebase
+  commands:
+    conventional-commits:
+      run: scripts/conventional-commit.sh {1}

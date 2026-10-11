@@ -1,0 +1,14 @@
+kill: stop processes. Try the gentle way first, then force.
+
+kill 1234                                     # ask process 1234 to quit (SIGTERM): it can clean up and exit
+kill -9 1234                                  # force it to stop (SIGKILL): no cleanup, last resort
+kill -l                                       # list all signal names and numbers
+kill -HUP 1234                                # send a signal by name; HUP often means 'reload your config'
+kill -STOP 1234 ; kill -CONT 1234             # pause a process, then resume it
+pgrep -fl node                                # find the pid first (explain-ps)
+pkill -f 'node server.js'                     # stop processes whose whole command line matches (-f); check with pgrep -fl first
+killall Finder                                # stop every process with exactly this name (macOS; the Finder restarts by itself)
+lsof -ti :3000 | xargs kill                   # free port 3000: kill whatever is listening on it (-t prints only pids)
+jobs ; kill %1                                # in this terminal: list background jobs; stop job number 1
+Ctrl-C  /  Ctrl-Z                             # stop the foreground program  /  suspend it (fg resumes it, bg runs it in the background)
+Order to try: Ctrl-C, kill PID, kill -9 PID. Check with pgrep -fl first that it is the process you mean; stopping processes is a destructive operation, so agents confirm with the user first (AGENTS.md).

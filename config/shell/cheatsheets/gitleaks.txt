@@ -1,0 +1,13 @@
+gitleaks: finds secrets (tokens, keys, passwords) in files and git history.
+
+gitleaks git --staged --redact                # scan what is staged for the next commit (this is what the pre-commit hook runs)
+gitleaks git                                  # scan the whole git history of the current repo
+gitleaks git --log-opts='-n 10'               # scan only the last 10 commits (anything git log accepts)
+gitleaks dir .                                # scan the files in a folder, ignoring git history
+gitleaks dir path/to/file                     # scan one file
+gitleaks git -v                               # verbose: show the matching line and rule for each finding
+gitleaks git -r report.json -f json           # write a report (-r) in a format (-f: json, csv, sarif, junit)
+gitleaks git --baseline-path report.json      # ignore findings already listed in an earlier report
+gitleaks stdin < file                         # scan text from standard input
+A real secret found in a commit must be revoked at its source; deleting it from history is not enough.
+A false positive can be silenced by adding its fingerprint to a .gitleaksignore file.

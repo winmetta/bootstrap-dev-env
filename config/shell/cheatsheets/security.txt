@@ -1,0 +1,28 @@
+security: the macOS Keychain from the terminal (also explain-keychain). Stores passwords, tokens and certificates.
+
+Be careful with secrets: a password printed in the terminal stays in the scrollback, so do not print or paste one into shared places (logs, chats, commits).
+security list-keychains                       # which keychains are searched (login, System)
+security default-keychain                     # the keychain new items go into
+security find-generic-password -s my-service -a me
+                                              # is an item there? prints its attributes, NOT the password
+security find-generic-password -s my-service -a me -w
+                                              # print ONLY the password (-w); macOS may ask you to allow access
+security add-generic-password -s my-service -a me -w
+                                              # add an item; with -w and no value it PROMPTS for the secret, so it stays out of shell history
+security add-generic-password -s my-service -a me -w 'value' -U
+                                              # -U updates if it exists. The value shows in history and ps: avoid for real secrets
+security delete-generic-password -s my-service -a me
+                                              # remove an item (cannot be undone)
+export API_TOKEN="$(security find-generic-password -s my-service -a me -w)"
+                                              # keep tokens in the Keychain and load them into an environment variable only when needed
+security find-internet-password -s github.com # website and git credentials (git config --global credential.helper osxkeychain stores them)
+security find-identity -v -p codesigning      # valid code-signing identities, for signing apps
+security find-certificate -a -c 'Name' -p     # print certificates whose name matches, as PEM text
+security import cert.p12 -k login.keychain-db # import a certificate or key file into a keychain
+security unlock-keychain ~/Library/Keychains/login.keychain-db
+                                              # unlock a keychain (prompts for its password)
+security lock-keychain -a                     # lock every keychain
+security create-keychain -p 'pw' test.keychain-db
+                                              # make a separate keychain file, handy for tests (security delete-keychain test.keychain-db removes it)
+-s is the service (what the item is for), -a the account (who). Together they identify one item.
+Keychain Access.app is the graphical version (Spotlight: Keychain Access). ssh passphrases: explain-ssh-add.

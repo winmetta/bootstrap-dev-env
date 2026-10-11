@@ -1,0 +1,11 @@
+shfmt: formats shell scripts. This repo uses tabs; the settings live in .editorconfig.
+
+shfmt -d script.sh                            # show a diff of what would change and change nothing (-d); exit status 1 if different
+shfmt -w script.sh                            # rewrite the file in place (-w)
+shfmt -l .                                    # list files that need formatting (-l); folders are searched recursively; exit status 1 if any are listed
+shfmt -w .                                    # format every shell script under the current folder
+shfmt -s -d script.sh                         # also simplify code (-s), e.g. [ "$a" = "" ] style cleanups
+shfmt -ln bash script.sh                      # set the dialect (-ln): bash, posix, mksh, bats
+shfmt -i 2 script.sh                          # indent with 2 spaces (-i; 0 means tabs). Normally .editorconfig decides
+shfmt < script.sh                             # format standard input to standard output
+Git hooks run it with shellcheck on staged *.sh files (see explain-shellcheck, explain-lefthook).

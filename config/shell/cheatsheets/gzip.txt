@@ -1,0 +1,20 @@
+gzip: compress and decompress single files (.gz). For folders, bundle with tar first.
+
+gzip file.log                                 # compress: creates file.log.gz and REMOVES the original
+gzip -k file.log                              # keep the original (-k)
+gzip -9 file.log                              # best compression, slower (-1 is fastest, -6 the default)
+gunzip file.log.gz                            # decompress (same as gzip -d); removes the .gz
+gzip -dk file.log.gz                          # decompress but keep the .gz (-d decompress, -k keep)
+gzip -c file.log > file.log.gz                # write to stdout (-c): the original is untouched; works the same on every system
+gzcat file.log.gz                             # read a compressed file without extracting it (Linux: zcat)
+gzcat file.log.gz | head                      # look at the start of a big compressed log
+zgrep -i error file.log.gz                    # grep inside a compressed file; zless pages through one
+gzip -l file.log.gz                           # show compressed size, original size and the ratio (-l)
+gzip -t file.log.gz                           # test the file for corruption (-t); no output means fine
+cat file.log | gzip > file.log.gz             # compress a stream from a pipe
+curl -s URL | gunzip                          # decompress a download on the fly
+gzip -r folder/                               # compress every file inside a folder separately (-r): this is NOT one archive
+tar -czf folder.tar.gz folder/                # one archive of a whole folder, gzip-compressed (see explain-tar)
+gzip -dc a.tar.gz | tar -xf -                 # decompress to a pipe and unpack: what tar -xzf does for you
+gzip handles ONE file at a time; use tar to bundle many files first. Names: .gz = gzip, .tar.gz or .tgz = tar then gzip.
+zip (explain-tar) makes archives with several files and works with Windows; xz and bzip2 compress smaller but slower.

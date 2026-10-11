@@ -1,0 +1,13 @@
+prettier: formats Markdown, JSON, CSS, JS and more, where a repo has a prettier config (.prettierrc.json).
+
+prettier --check README.md                    # report whether files are formatted; changes nothing (exit status 1 if not)
+prettier --write README.md                    # format files in place (-w); commit first so git diff shows the changes
+prettier -l '**/*.md'                         # list only the files that need formatting (--list-different)
+prettier --write '**/*.{md,json}'             # several file types at once (quote the glob)
+prettier --prose-wrap preserve --check README.md
+                                              # keep long Markdown lines as they are (also set in .prettierrc.json)
+prettier --find-config-path README.md         # which config file applies to a file
+prettier --no-config --check file             # ignore any config and use defaults
+prettier --stdin-filepath x.md < in.md        # format text from stdin, treating it as that file type
+Skip files with a .prettierignore (same syntax as .gitignore) or a <!-- prettier-ignore --> comment.
+Indentation and line endings come from .editorconfig.

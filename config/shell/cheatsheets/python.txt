@@ -1,0 +1,16 @@
+python3: Python 3, installed and versioned by mise (each repo can pin its own version).
+
+python3 --version                             # which version runs
+python3 script.py arg1 arg2                   # run a script
+python3 -c 'print(1 + 1)'                     # run a one-liner (-c)
+python3                                       # interactive prompt; Ctrl-D leaves
+python3 -m venv .venv                         # create a virtual environment in .venv
+source .venv/bin/activate                     # use it (deactivate leaves); pip installs now stay inside the project
+python3 -m pip install requests               # install a package (inside the venv)
+python3 -m pip freeze > requirements.txt      # record what is installed
+python3 -m pip install -r requirements.txt    # install everything from that list
+python3 -m http.server 8000                   # serve the current folder at http://localhost:8000
+python3 -m json.tool file.json                # pretty-print JSON (like jq .)
+python3 -m unittest                           # run tests written with unittest
+python3 -I script.py                          # isolated mode: ignores PYTHON* variables and the current folder (safer on untrusted folders)
+mise use python@3.13                          # pin the Python version for this repo (see explain-mise)

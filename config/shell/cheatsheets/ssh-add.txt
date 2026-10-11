@@ -1,0 +1,19 @@
+ssh-add: give keys to the ssh agent so you type the passphrase once, not on every connection.
+
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+                                              # load a key and store its passphrase in the macOS Keychain (older macOS: ssh-add -K)
+ssh-add --apple-load-keychain                 # load every key whose passphrase is in the Keychain (run after a restart)
+ssh-add ~/.ssh/id_ed25519                     # load a key for this login session (asks for the passphrase)
+ssh-add -l                                    # list loaded keys (fingerprints); 'The agent has no identities' means none
+ssh-add -L                                    # list loaded keys as public keys, to paste where they are authorized
+ssh-add -d ~/.ssh/id_ed25519                  # remove one key from the agent
+ssh-add -D                                    # remove every key from the agent
+ssh-add -t 3600 ~/.ssh/id_ed25519             # load a key for one hour only (-t seconds)
+echo $SSH_AUTH_SOCK                           # is an agent reachable from this shell? (macOS starts one for you)
+Do it automatically: put this in ~/.ssh/config
+    Host *
+        AddKeysToAgent yes
+        UseKeychain yes
+        IdentityFile ~/.ssh/id_ed25519
+Agent forwarding (ssh -A) lets the server use your keys: only for servers you fully trust.
+Passphrase stored in the Keychain: see explain-keychain.

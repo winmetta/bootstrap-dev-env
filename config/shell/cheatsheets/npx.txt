@@ -1,0 +1,16 @@
+npx: run a command from an npm package without installing it globally. Used by many MCP servers.
+
+npx cowsay hello                              # download the package (asks first) and run its command; it is cached, not installed into your project
+npx -y cowsay hello                           # do not ask before installing (-y); how MCP clients start servers
+npx cowsay@1.6.0 hello                        # run a specific version: package@version
+npx prettier --check .                        # inside a project: runs the project's own copy from node_modules/.bin if it is a dependency
+npx --no prettier --version                   # use only what is already installed locally; never download (--no)
+npx -p typescript tsc --version               # when the package name and the command differ: -p <package> <command>
+npx -y @modelcontextprotocol/server-filesystem ~/projects
+                                              # an MCP server that exposes one folder
+npx -y @modelcontextprotocol/server-github    # an MCP server for GitHub (reads a token from the environment)
+npm exec -- prettier --version                # the command npx is built on; use it in scripts
+ls ~/.npm/_npx                                # where the cached downloads live
+MCP client config for an npx server:  { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path"] }
+npx runs code from the npm registry with your user's permissions: trust the package, and pin a version for anything automated.
+Related: explain-npm (install and run scripts), explain-node, explain-uvx (the Python equivalent).

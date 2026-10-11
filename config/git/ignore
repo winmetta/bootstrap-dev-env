@@ -1,0 +1,4 @@
+# Patterns that git should ignore in every repo (a global ignore file).
+# bootstrap.sh adds any line below that is missing to your global ignore
+# file (core.excludesFile, default ~/.config/git/ignore). It never removes lines.
+.DS_Store

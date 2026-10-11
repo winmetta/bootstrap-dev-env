@@ -1,0 +1,16 @@
+gh: GitHub from the terminal (pull requests, issues, CI, the API).
+
+gh auth login ; gh auth status                # sign in; check who you are signed in as
+gh repo clone <owner>/<repo>                  # clone a repo
+gh repo list <owner> --limit 100             # list an owner's repos
+gh repo view --web                            # open this repo in the browser (gh browse does the same)
+gh pr create --fill                           # open a pull request from this branch, title and body from the commits (--web to edit in the browser)
+gh pr list                                    # open pull requests; gh pr view 12 shows one, gh pr checkout 12 switches to it
+gh pr checks                                  # CI status for this branch's pull request
+gh pr diff 12                                 # the changes in a pull request
+gh issue list ; gh issue create               # list issues; create one
+gh run list                                   # recent CI runs; gh run watch follows one, gh run view --log-failed shows why it failed
+gh api repos/<owner>/<repo> --jq .default_branch
+                                              # call any API endpoint and filter the answer (--jq)
+gh api user --jq .id                          # your numeric GitHub id (used in the noreply email address)
+Ask before merging or editing pull requests: those are outward-facing actions.

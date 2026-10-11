@@ -1,0 +1,28 @@
+# Shared editor settings for the repos of one workspace: link or copy this file into
+# the workspace root so every repo under it inherits them.
+# A repo's own .editorconfig is closer to its files and overrides these.
+# Scoped to Markdown and shell scripts; other file types are left to each repo.
+root = true
+
+[*.sh]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+# shfmt reads these:
+shell_variant = bash
+switch_case_indent = false
+
+[*.md]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+# Two trailing spaces are a Markdown line break.
+trim_trailing_whitespace = false
+# Prose is not hard-wrapped; let the editor soft-wrap.
+max_line_length = off
