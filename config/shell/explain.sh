@@ -88,6 +88,7 @@ git and GitHub|git gh lefthook gitleaks
 cloud|aws pulumi
 containers|docker docker-compose colima
 editors|vim
+shell|completion
 shell scripts|shellcheck shfmt
 markdown|markdownlint prettier
 languages|python node npm npx uv uvx

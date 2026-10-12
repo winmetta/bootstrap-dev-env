@@ -65,6 +65,23 @@ run_gh() {
 	fi
 }
 
+# Run a tool's command from PATH, or through mise when this shell has not activated
+# mise yet. `mise` itself is found with find_mise.
+run_tool() {
+	local mise_bin
+	if [[ "$1" == mise ]]; then
+		shift
+		mise_bin="$(find_mise)" || return 1
+		"$mise_bin" "$@"
+	elif command -v "$1" >/dev/null 2>&1; then
+		"$@"
+	elif mise_bin="$(find_mise)"; then
+		"$mise_bin" exec -- "$@"
+	else
+		return 1
+	fi
+}
+
 # Prefer mise on PATH; fall back to the location the mise.run installer uses.
 find_mise() {
 	if command -v mise >/dev/null 2>&1; then

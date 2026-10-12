@@ -281,6 +281,77 @@ configure_aliases() {
 	log_info "Run 'explain-aliases' in a new terminal to see them."
 }
 
+# Zsh tab completion with nothing but zsh. config/shell/completion.zsh turns zsh's own
+# completion system on (ls, git, grep, ssh, curl and tar already ship completion with
+# macOS). The tools mise installs do not ship zsh completion, so each one that can print
+# its own script is asked to, into $COMPLETIONS_DIR/_<tool>. The line that sources
+# completion.zsh is appended to ~/.zshrc like every other line this script adds (nothing
+# is rewritten); completion.zsh registers zoxide's `z` completion itself, so it does not
+# matter whether it is sourced before or after the zoxide line.
+
+# Source completion.zsh from a zsh startup file, once.
+configure_completion_in() {
+	local rc="$1"
+	if grep -qF "$COMPLETION_DEST" "$rc" 2>/dev/null; then
+		log_ok "zsh completion already sourced in $rc"
+	else
+		printf '%s\n' "[ -f \"$COMPLETION_DEST\" ] && . \"$COMPLETION_DEST\"" >>"$rc"
+		log_ok "sourced the zsh completion setup in $rc"
+	fi
+}
+
+# Print one tool's completion script into $COMPLETIONS_DIR/_<tool>, and say "changed",
+# "same" or "skipped". Only output that starts with #compdef replaces the old file, so a
+# generator that fails never clobbers a good one.
+generate_completion_file() {
+	local tool="$1" cmd="$2" tmp dest="$COMPLETIONS_DIR/_$1" result=skipped
+	tmp="$(mktemp)" || return 1
+	# shellcheck disable=SC2086 # $cmd is a short list of words
+	if run_tool $cmd >"$tmp" 2>/dev/null && head -n 1 "$tmp" | grep -q '^#compdef'; then
+		if [[ -f "$dest" ]] && cmp -s "$tmp" "$dest"; then
+			result=same
+		elif cp "$tmp" "$dest"; then
+			result=changed
+		fi
+	fi
+	rm -f "$tmp"
+	echo "$result"
+}
+
+install_completion() {
+	local entry tool result changed=0 skipped="" cache="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+	mkdir -p "$COMPLETIONS_DIR" "$(dirname "$COMPLETION_DEST")" || return 1
+	cp "$COMPLETION_SRC" "$COMPLETION_DEST" || return 1
+	for entry in "${COMPLETION_GENERATORS[@]}"; do
+		tool="${entry%%|*}"
+		result="$(generate_completion_file "$tool" "${entry#*|}")" || result=skipped
+		case "$result" in
+		changed)
+			changed=$((changed + 1))
+			log_info "completion for $tool: written"
+			;;
+		same) ;;
+		*) skipped="$skipped $tool" ;;
+		esac
+	done
+	if [[ -n "$skipped" ]]; then
+		log_info "no completion for:$skipped (not installed, or it cannot print one)"
+	fi
+	# zsh only sees a new or changed completion file after the cached dump is rebuilt.
+	if ((changed > 0)); then
+		rm -f "$cache"/zcompdump*
+	fi
+	configure_completion_in "${ZDOTDIR:-$HOME}/.zshrc"
+}
+
+configure_completion() {
+	log_step "zsh tab completion (no framework)"
+	attempt "set up zsh completion" \
+		"copy config/shell/completion.zsh to '$COMPLETION_DEST' and add '. $COMPLETION_DEST' to ~/.zshrc" \
+		install_completion
+	log_info "Open a new terminal, then try: ls -<Tab>   git ch<Tab>   (see 'explain completion')."
+}
+
 # Install the explain-* shell helpers: copy shell/explain.sh to
 # ~/.config/bootstrap-dev-env/explain.sh (replaced on every run, it is ours) and source it
 # from a startup file.
