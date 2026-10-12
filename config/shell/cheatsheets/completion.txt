@@ -13,7 +13,7 @@ ll -<Tab>                                     # aliases complete like the comman
 echo $zsh<Tab>                                # variables, options and more complete too
 explain completion                            # this page
 Nothing here is a plugin or framework: it is zsh's built-in completion system, switched on by config/shell/completion.zsh
-(installed as ~/.config/bootstrap-dev-env/completion.zsh and sourced from ~/.zshrc before the zoxide line).
+(installed as ~/.config/bootstrap-dev-env/completion.zsh and sourced from ~/.zshrc).
 Completion scripts for installed tools live in ~/.config/bootstrap-dev-env/completions/_<tool>. Re-run the bootstrap to
 regenerate them after updating a tool; it also rebuilds zsh's cached dump (~/.cache/zsh/zcompdump).
 A new completion not showing up? rm ~/.cache/zsh/zcompdump* and open a new terminal.

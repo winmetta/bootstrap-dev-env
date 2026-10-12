@@ -82,23 +82,6 @@ run_tool() {
 	fi
 }
 
-# Add LINE to the file RC before the first line that contains PATTERN, so it runs
-# earlier; at the end when nothing matches. Does nothing when RC already has the line.
-insert_before_in() {
-	local rc="$1" pattern="$2" line="$3" tmp
-	if grep -qxF -- "$line" "$rc" 2>/dev/null; then
-		return 0
-	fi
-	if [[ -f "$rc" ]] && grep -qF -- "$pattern" "$rc"; then
-		tmp="$(mktemp)" || return 1
-		LINE="$line" PAT="$pattern" awk '!done && index($0, ENVIRON["PAT"]) { print ENVIRON["LINE"]; done = 1 } { print }' "$rc" >"$tmp" &&
-			cat "$tmp" >"$rc"
-		rm -f "$tmp"
-	else
-		printf '%s\n' "$line" >>"$rc"
-	fi
-}
-
 # Prefer mise on PATH; fall back to the location the mise.run installer uses.
 find_mise() {
 	if command -v mise >/dev/null 2>&1; then

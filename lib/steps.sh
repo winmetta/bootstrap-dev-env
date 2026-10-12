@@ -285,8 +285,20 @@ configure_aliases() {
 # completion system on (ls, git, grep, ssh, curl and tar already ship completion with
 # macOS). The tools mise installs do not ship zsh completion, so each one that can print
 # its own script is asked to, into $COMPLETIONS_DIR/_<tool>. The line that sources
-# completion.zsh goes BEFORE the zoxide and fzf lines in ~/.zshrc, because zoxide only
-# registers its completion when compinit has already run.
+# completion.zsh is appended to ~/.zshrc like every other line this script adds (nothing
+# is rewritten); completion.zsh registers zoxide's `z` completion itself, so it does not
+# matter whether it is sourced before or after the zoxide line.
+
+# Source completion.zsh from a zsh startup file, once.
+configure_completion_in() {
+	local rc="$1"
+	if grep -qF "$COMPLETION_DEST" "$rc" 2>/dev/null; then
+		log_ok "zsh completion already sourced in $rc"
+	else
+		printf '%s\n' "[ -f \"$COMPLETION_DEST\" ] && . \"$COMPLETION_DEST\"" >>"$rc"
+		log_ok "sourced the zsh completion setup in $rc"
+	fi
+}
 
 # Print one tool's completion script into $COMPLETIONS_DIR/_<tool>, and say "changed",
 # "same" or "skipped". Only output that starts with #compdef replaces the old file, so a
@@ -329,13 +341,13 @@ install_completion() {
 	if ((changed > 0)); then
 		rm -f "$cache"/zcompdump*
 	fi
-	insert_before_in "${ZDOTDIR:-$HOME}/.zshrc" "zoxide init" "[ -f \"$COMPLETION_DEST\" ] && . \"$COMPLETION_DEST\""
+	configure_completion_in "${ZDOTDIR:-$HOME}/.zshrc"
 }
 
 configure_completion() {
 	log_step "zsh tab completion (no framework)"
 	attempt "set up zsh completion" \
-		"copy config/shell/completion.zsh to '$COMPLETION_DEST' and add '. $COMPLETION_DEST' to ~/.zshrc before the zoxide line" \
+		"copy config/shell/completion.zsh to '$COMPLETION_DEST' and add '. $COMPLETION_DEST' to ~/.zshrc" \
 		install_completion
 	log_info "Open a new terminal, then try: ls -<Tab>   git ch<Tab>   (see 'explain completion')."
 }

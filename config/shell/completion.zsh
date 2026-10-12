@@ -1,7 +1,6 @@
 # Zsh tab completion, using only what zsh ships with (no framework or plugin).
 # bootstrap.sh copies this file to ~/.config/bootstrap-dev-env/completion.zsh and
-# sources it from ~/.zshrc BEFORE the zoxide and fzf lines: zoxide registers its
-# completion only if compinit has already run. zsh only; bash is not covered.
+# sources it from ~/.zshrc. zsh only; bash is not covered.
 #
 # What you get: `ls -<Tab>` lists the options with a one-line description, `git ch<Tab>`
 # offers checkout and cherry-pick, and so on. Press Tab again to move through the menu
@@ -30,6 +29,10 @@ _bde_init_completion() {
 }
 _bde_init_completion
 unfunction _bde_init_completion
+
+# zoxide registers completion for `z` only if compinit has already run when its init line
+# executes. If this file is sourced after that line, register it now.
+(( $+functions[__zoxide_z_complete] )) && compdef __zoxide_z_complete z
 
 # Arrow-key menu, with a description for every option and headings above each group.
 zstyle ':completion:*' menu select
