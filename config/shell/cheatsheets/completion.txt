@@ -1,0 +1,20 @@
+completion: tab completion in zsh, with option descriptions (zsh's own completion system, no framework).
+
+ls -<Tab>                                     # press Tab after a dash: zsh lists the options with a one-line description each, grouped under headings
+git ch<Tab>                                   # completes a command: checkout, cherry-pick, ... (git checkout <Tab> then offers branches)
+git commit --<Tab>                            # every long option of the subcommand you are typing, with what it does
+gh pr <Tab>                                   # tools installed by the bootstrap complete too: gh, docker, uv, rg, fd, bat, colima, pulumi, mise, ...
+ssh <Tab>                                     # hosts from ~/.ssh/config and known_hosts
+cd ~/win<Tab>                                 # paths complete as you type; matching ignores case (README finds readme)
+Tab, Tab                                      # the first Tab lists matches, the second opens a menu you move through
+Arrow keys / Tab                              # move in the menu; Shift-Tab goes back; Enter accepts; Ctrl-G cancels the menu
+Ctrl-D                                        # at the end of a word: list the possible completions without choosing one
+ll -<Tab>                                     # aliases complete like the command they stand for (ll is ls -l with colour)
+echo $zsh<Tab>                                # variables, options and more complete too
+explain completion                            # this page
+Nothing here is a plugin or framework: it is zsh's built-in completion system, switched on by config/shell/completion.zsh
+(installed as ~/.config/bootstrap-dev-env/completion.zsh and sourced from ~/.zshrc before the zoxide line).
+Completion scripts for installed tools live in ~/.config/bootstrap-dev-env/completions/_<tool>. Re-run the bootstrap to
+regenerate them after updating a tool; it also rebuilds zsh's cached dump (~/.cache/zsh/zcompdump).
+A new completion not showing up? rm ~/.cache/zsh/zcompdump* and open a new terminal.
+Only zsh is covered. Bash would need the separate bash-completion package.

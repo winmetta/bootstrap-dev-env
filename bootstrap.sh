@@ -26,8 +26,8 @@
 #     settings and aliases (config/git/dev-env.gitconfig), a global ignore file
 #     (config/git/ignore), the commit-message editor (Zed or vim), and the lefthook
 #     hooks of this repo
-#   - shell: starship config, zoxide and fzf, the explain-* helpers with their
-#     cheat sheets, aliases
+#   - shell: zsh tab completion (zsh's own, no framework), starship config, zoxide and
+#     fzf, the explain-* helpers with their cheat sheets, aliases
 #   - vim: the shared vimrc and the plugins in VIM_PLUGINS
 #   - platform extras (macOS: fonts, iTerm2 profile, Zed, Finder preferences)
 #   - the VS Code extensions listed in config/vscode/extensions.txt
@@ -49,6 +49,27 @@ CONFIG_HOME="$HOME/.config/bootstrap-dev-env"
 
 FZF_SH_SRC="$ROOT_DIR/config/shell/fzf.sh"
 FZF_SH_DEST="$CONFIG_HOME/fzf.sh"
+COMPLETION_SRC="$ROOT_DIR/config/shell/completion.zsh"
+COMPLETION_DEST="$CONFIG_HOME/completion.zsh"
+COMPLETIONS_DIR="$CONFIG_HOME/completions"
+# "tool|command that prints the tool's zsh completion script". A tool that is not
+# installed, or whose command fails, is skipped.
+COMPLETION_GENERATORS=(
+	"gh|gh completion -s zsh"
+	"docker|docker completion zsh"
+	"colima|colima completion zsh"
+	"limactl|limactl completion zsh"
+	"uv|uv generate-shell-completion zsh"
+	"uvx|uvx --generate-shell-completion zsh"
+	"rg|rg --generate complete-zsh"
+	"fd|fd --gen-completions zsh"
+	"bat|bat --completion zsh"
+	"pulumi|pulumi gen-completion zsh"
+	"lefthook|lefthook completion zsh"
+	"gitleaks|gitleaks completion zsh"
+	"starship|starship completions zsh"
+	"mise|mise completion zsh"
+)
 ALIASES_SRC="$ROOT_DIR/config/shell/aliases.sh"
 ALIASES_DEST="$CONFIG_HOME/aliases.sh"
 SHEETS_SRC="$ROOT_DIR/config/shell/cheatsheets"
@@ -167,6 +188,7 @@ main() {
 	install_cli_tools
 	configure_git_identity
 	configure_git
+	configure_completion
 	configure_starship
 	configure_shell_tools
 	configure_explain
