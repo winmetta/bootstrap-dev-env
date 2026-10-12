@@ -13,14 +13,18 @@ else
 fi
 
 # --- Listing files ---
-#: long list with human-readable sizes (K, M, G); hidden files not shown
-alias ll="ls $_wm_color -lh"
-#: list all files including hidden (dot) files, but not the . and .. entries
-alias la="ls $_wm_color -A"
-#: long list of everything, including hidden files such as .git and .env
-alias lla="ls $_wm_color -lAh"
+# -F puts a marker after each name: / folder, * runnable file, @ symlink, = socket, | pipe.
+# The aliases below call `command ls` so they do not stack on top of the `ls` alias.
+#: list files in colour with a marker after each name: / folder, * runnable file, @ symlink (type \ls for the plain command)
+alias ls="ls $_wm_color -F"
+#: long list with human-readable sizes (K, M, G), in colour, with markers; hidden files not shown
+alias ll="command ls $_wm_color -lhF"
+#: list all files including hidden (dot) files, but not the . and .. entries, in colour, with markers
+alias la="command ls $_wm_color -AF"
+#: long list of everything, including hidden files such as .git and .env, in colour, with markers
+alias lla="command ls $_wm_color -lAhF"
 #: like lla, sorted by modified time with the newest file LAST (right above your prompt)
-alias lt="ls $_wm_color -lAhtr"
+alias lt="command ls $_wm_color -lAhtrF"
 
 # --- Directory trees (the tree command is installed by the bootstrap) ---
 #: folder tree, 2 levels deep
