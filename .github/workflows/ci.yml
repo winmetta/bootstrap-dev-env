@@ -16,7 +16,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  bash32-tests:
+    runs-on: macos-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test error reporting on Bash 3.2
+        # macOS bundles Bash 3.2 at /bin/bash; select it explicitly instead of a newer Bash on PATH.
+        shell: /bin/bash -e {0}
+        run: |
+          [[ "${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}" == 3.2 ]]
+          /bin/bash scripts/test-error-reporting.sh
+
   checks:
+    needs: bash32-tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -42,6 +55,8 @@ jobs:
             shfmt = "3.14.1"
       - name: Run the pre-commit checks on every file
         run: lefthook run pre-commit --all-files
+      - name: Test error reporting
+        run: bash scripts/test-error-reporting.sh
       # The hook only scans what is staged, so scan the whole history here.
       - name: Scan the git history for secrets
         run: gitleaks git --redact --no-banner

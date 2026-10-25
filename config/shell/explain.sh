@@ -136,6 +136,7 @@ claude|Claude Code, an AI coding agent|claude
 codex|Codex CLI, an AI coding agent|codex
 starship|the shell prompt: path, git branch, ahead/behind counts and a green check when synced|edit ~/.config/starship.toml ; explain-starship
 node|JavaScript runtime (latest LTS; repos pin their own version)|node --version ; mise use node@22
+go|Go compiler and tools for building, testing and formatting Go projects|go version ; go build ./... ; go test ./... ; go fmt ./...
 pulumi|infrastructure as code: preview, then apply changes to real cloud resources|pulumi preview ; pulumi up ; pulumi stack ls
 uv|fast Python package, project and tool manager (pip, venv and pipx in one); uvx runs a tool without installing it|uv init ; uv add requests ; uv run script.py ; uvx ruff --version
 python3|Python 3 (latest stable; repos pin their own version)|python3 --version ; python3 -m venv .venv

@@ -10,6 +10,7 @@ codex:codex
 starship:starship
 node@lts:node
 python@latest:python3
+go:go
 vim:vim
 ripgrep:rg
 fd:fd

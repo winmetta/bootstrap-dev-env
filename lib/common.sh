@@ -25,7 +25,16 @@ die() {
 	printf '    %s✖ %s%s\n' "$c_red" "$*" "$c_off" >&2
 	exit 1
 }
-trap 'printf "%s✖ bootstrap-dev-env stopped at line %s (exit %s)%s\n" "$c_red" "$LINENO" "$?" "$c_off" >&2' ERR
+# Bash 3.2 also fires inherited ERR traps inside command substitutions whose
+# failures the caller handles. Only report in the main shell: an unhandled
+# substitution failure propagates to its assignment and is reported there.
+report_error() {
+	local status="$1" source="$2" line="$3"
+	if ((BASH_SUBSHELL == 0)); then
+		printf '%s✖ bootstrap-dev-env stopped at %s:%s (exit %s)%s\n' "$c_red" "$source" "$line" "$status" "$c_off" >&2
+	fi
+}
+trap 'report_error "$?" "${BASH_SOURCE[0]:-$0}" "$LINENO"' ERR
 
 # Record a non-fatal failure and keep going.
 record_failure() {
