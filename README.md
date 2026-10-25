@@ -26,7 +26,7 @@ If a tool fails to install, the script keeps going and lists every failure with 
 
 1. Checks the platform and installs the Xcode Command Line Tools (`git`, `curl`, compiler). If it asks you to finish the installer, do that and re-run.
 2. Installs mise and activates it in `~/.zshrc` and `~/.bashrc` (and makes `~/.bash_profile` load `~/.bashrc`, because Terminal.app starts bash as a login shell).
-3. Installs the CLI tools with mise as global defaults: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `wget`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
+3. Installs the CLI tools with mise as global defaults, including `just` for running project tasks from a `justfile`: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `wget`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
 4. Checks that git has a `user.name` and `user.email`, suggesting your GitHub name and `<id>+<login>@users.noreply.github.com` address (it offers to run `gh auth login` first).
 5. Installs shared git settings and aliases from [config/git/dev-env.gitconfig](config/git/dev-env.gitconfig) to `~/.config/git/bootstrap-dev-env.gitconfig`, included at the top of your global git config so your own settings win, and adds the patterns from [config/git/ignore](config/git/ignore) (such as `.DS_Store`) to your global ignore file.
 6. Turns on zsh tab completion with zsh's own completion system (no framework): [config/shell/completion.zsh](config/shell/completion.zsh) gives `ls -<Tab>` and `git ch<Tab>` option and command suggestions with descriptions, and the script generates completion files into `~/.config/bootstrap-dev-env/completions/` for the installed tools that can print one (gh, docker, colima, uv, rg, fd, bat, pulumi, mise, ...). Its `source` line is appended to `~/.zshrc` like the others, and it registers zoxide's `z` completion itself, so the order of the lines does not matter. zsh only. Run `explain completion` for the keys.
@@ -118,5 +118,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 CI ([.github/workflows/ci.yml](.github/workflows/ci.yml), job `checks`) runs the same checks on every pull request. The default-branch rules are in [rulesets/default.json](rulesets/default.json).
 
 ## Manual install
+
+To install only the task runner with an existing mise installation, run `mise use -g just`. In a project with a `justfile`, use `just --list` to list its recipes and `just <recipe>` to run one.
 
 Without the script, on macOS: install the Command Line Tools (`xcode-select --install`), mise (`curl -fsSL https://mise.run | sh`, then add `eval "$(~/.local/bin/mise activate zsh)"` to `~/.zshrc`), then `mise use -g <tool>` for each tool in the lists in [tools/](tools/). Copy the files from [config/](config/) to where `bootstrap.sh` puts them (the `*_DEST` variables at the top of it) and source them from `~/.zshrc`. For VS Code extensions, run `code --install-extension <id>` for each id in [config/vscode/extensions.txt](config/vscode/extensions.txt).
