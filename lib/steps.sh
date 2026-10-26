@@ -368,6 +368,7 @@ configure_explain_in() {
 
 install_explain() {
 	mkdir -p "$(dirname "$EXPLAIN_DEST")" && cp "$EXPLAIN_SRC" "$EXPLAIN_DEST" || return 1
+	cp "$GNU_TOOLS_SRC" "$GNU_TOOLS_DEST" || return 1
 	# One explain-<tool> cheat sheet per .txt file; sheets removed from the repo stay until you delete them.
 	mkdir -p "$SHEETS_DEST" && cp "$SHEETS_SRC"/*.txt "$SHEETS_DEST/" || return 1
 	configure_explain_in "${ZDOTDIR:-$HOME}/.zshrc"
@@ -377,7 +378,7 @@ install_explain() {
 configure_explain() {
 	log_step "shell helpers (explain-*)"
 	attempt "install explain-* shell helpers" \
-		"copy config/shell/explain.sh to '$EXPLAIN_DEST', config/shell/cheatsheets/*.txt to '$SHEETS_DEST', and add '. $EXPLAIN_DEST' to ~/.zshrc and ~/.bashrc" \
+		"copy config/shell/explain.sh to '$EXPLAIN_DEST', config/shell/gnu-tools.txt to '$GNU_TOOLS_DEST', config/shell/cheatsheets/*.txt to '$SHEETS_DEST', and add '. $EXPLAIN_DEST' to ~/.zshrc and ~/.bashrc" \
 		install_explain
 	log_info "Run 'explain' in a new terminal to list them."
 }

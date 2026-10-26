@@ -1,14 +1,27 @@
 # Tools installed with mise on every platform, one "tool:command" entry per line.
 # The command is the part after the LAST colon (so conda:bash:bash works); it is
 # used to warn about copies of the tool on PATH that mise does not manage.
+# Explicit conda packages select GNU implementations; plain coreutils is uutils.
+conda:coreutils:ls
+conda:sed:sed
+conda:grep:grep
+conda:findutils:find
+conda:gawk:awk
+conda:diffutils:diff
+conda:tar:tar
+conda:patch:patch
+conda:gzip:gzip
+conda:wget:wget
 gh:gh
 shellcheck:shellcheck
 shfmt:shfmt
+just:just
 claude:claude
 codex:codex
 starship:starship
 node@lts:node
 python@latest:python3
+go:go
 vim:vim
 ripgrep:rg
 fd:fd

@@ -1,4 +1,4 @@
-grep: search text in files. (rg is faster and friendlier: explain-rg; grep is on every machine.)
+GNU grep: search text in files. (rg is faster and friendlier: explain-rg; grep is on every machine.)
 
 grep -rn TODO .                               # search a folder recursively (-r) and show line numbers (-n)
 grep -i todo file                             # ignore case
@@ -13,4 +13,6 @@ grep -rn TODO . --exclude-dir=node_modules --exclude-dir=.git
                                               # skip folders
 grep -o 'https\?://[^ ]*' file                # print only the matching part
 ps aux | grep node                            # filter another command's output (it also matches the grep itself; pgrep -fl is cleaner)
-macOS grep (BSD) has no -P (Perl regex); use -E, or rg, which supports more.
+grep -P '\d+' file                           # Perl-compatible regex (-P), supported by this GNU build
+grep --version                               # check that GNU grep is selected
+Native macOS grep lacks -P. Use grep -E with POSIX character classes in pre-install bootstrap code.

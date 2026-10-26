@@ -1,8 +1,8 @@
-sed: edit text streams. (sd is friendlier for find-and-replace: explain-sd.)
+GNU sed: edit text streams. (sd is friendlier for find-and-replace: explain-sd.)
 
 sed 's/old/new/' file                         # replace the first 'old' on each line; prints the result, does not change the file
 sed 's/old/new/g' file                        # g = every occurrence on each line
-sed -i '' 's/old/new/g' file                  # edit IN PLACE on macOS: the empty '' after -i is required
+sed -i 's/old/new/g' file                     # GNU in-place editing without a backup (changes the file)
 sed -i.bak 's/old/new/g' file                 # in place with a backup file.bak: works on macOS AND Linux (use this in scripts)
 sed -n '10,20p' file                          # print only lines 10 to 20 (-n turns off automatic printing)
 sed '/pattern/d' file                         # delete lines that match
@@ -10,4 +10,5 @@ sed -n '/start/,/end/p' file                  # print from the first line matchi
 sed -E 's/([0-9]+)-([0-9]+)/\2-\1/' file      # extended regex (-E) with groups \1 \2 in the replacement
 sed '1d' file                                 # drop the first line (e.g. a CSV header)
 sed 's#/usr/local#/opt#g' file                # any character can be the delimiter: handy when the text has slashes
-GNU sed (Linux) differs from macOS sed: -i without suffix, \n and \+ in patterns. Test scripts on both.
+The bootstrap installs GNU sed on both platforms. Verify with sed --version.
+The native /usr/bin/sed on macOS still requires an argument after -i; bootstrap code must support it.

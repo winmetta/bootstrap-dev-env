@@ -1,4 +1,4 @@
-awk: pick columns and do small calculations on text. Splits each line into fields $1 $2 ...
+GNU Awk (awk / gawk): pick columns and do small calculations on text. Splits each line into fields $1 $2 ...
 
 awk '{print $1}' file                         # print the first column (fields split on whitespace)
 awk '{print $1, $NF}' file                    # first and last column ($NF = the last field)
@@ -11,5 +11,6 @@ awk '{sum += $2} END {print sum}' file        # add up column 2 and print the to
 awk '{c[$1]++} END {for (k in c) print k, c[k]}' file
                                               # count how often each value in column 1 appears
 awk '{printf "%-10s %5d\n", $1, $2}' file     # formatted output, like printf
-ls -l | awk '{print $5, $NF}'                 # use it on any command's output: size and name
-macOS awk is the BSD one: no gensub or strftime. Use gawk if you need them.
+printf 'item 42\n' | awk '{print $2}'          # process another command's output
+awk --version ; gawk --version                # confirm GNU Awk is selected
+The bootstrap provides awk and gawk through conda:gawk. Native /usr/bin/awk has different extensions.

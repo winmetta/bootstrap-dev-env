@@ -1,4 +1,4 @@
-find: the classic way to search for files by name, type, age or size. (fd is simpler: explain-fd)
+GNU find: the classic way to search for files by name, type, age or size. (fd is simpler: explain-fd)
 
 find . -name '*.md'                           # files by name pattern (quote the pattern so the shell does not expand it)
 find . -iname 'readme*'                       # ignore case (-iname)
@@ -13,4 +13,6 @@ find . -name '*.sh' -exec shellcheck {} +     # run a command on the matches (+ 
 find . -name '*.tmp' -exec rm {} \;           # run a command once per file; only after checking with -print (rm cannot be undone)
 find . -empty                                 # empty files and folders
 find . -print0 | xargs -0 ls -l               # NUL-separated names are safe with spaces (see explain-xargs)
-BSD find (macOS) needs a start folder: find . -name x. Prefer fd for everyday searching.
+find . -type f -printf '%p\n'                 # GNU formatted output
+find --version                               # confirm GNU Findutils
+Use an explicit start folder in bootstrap code, and avoid GNU-only predicates before installation.

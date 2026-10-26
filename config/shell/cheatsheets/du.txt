@@ -1,4 +1,4 @@
-du: how much space does a folder or file use? (df is for whole disks)
+GNU du: how much space does a folder or file use? (df is for whole disks)
 
 du -sh .                                      # total size of the current folder (-s summary, -h human-readable)
 du -sh *                                      # size of each item here (hidden files are not matched by *; use .[!.]* * to include them)

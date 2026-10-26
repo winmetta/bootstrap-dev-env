@@ -1,4 +1,4 @@
-wget: download files from the web. (macOS also has curl: curl -fsSLO URL is the same as wget URL.)
+GNU wget: download files from the web. (curl -fsSLO URL is a common alternative.)
 
 wget URL                                      # download into the current folder, named after the URL
 wget -O out.zip URL                           # choose the file name (-O); -O - writes to the terminal instead

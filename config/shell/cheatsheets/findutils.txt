@@ -1,0 +1,13 @@
+GNU Findutils: find files, build locate databases and turn input into command arguments.
+
+find --version ; xargs --version              # verify GNU Findutils is selected
+find . -type f -printf '%p\n'                 # formatted output, a GNU extension
+find . -type f -print0 | xargs -0 -r wc -l    # safe names (-0), skip empty input (-r)
+find . -name '*.sh' -exec shellcheck {} +     # batch arguments directly without xargs
+updatedb --localpaths="$HOME/projects" --output=files.db
+                                              # build a scoped file-name database without a system-wide index
+locate --database=files.db README             # search that database
+explain find ; explain xargs ; explain locate ; explain updatedb
+
+Installed through conda:findutils. Use mise exec -- <command> when mise is not active.
+Manual: https://www.gnu.org/software/findutils/manual/html_mono/find.html

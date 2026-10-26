@@ -1,4 +1,4 @@
-tar: bundle and unpack archives. (macOS tar is bsdtar; these flags also work on Linux.)
+GNU tar: bundle and unpack archives. The bootstrap selects GNU tar on macOS and Linux.
 
 tar -czf out.tar.gz folder/                   # create (-c) a gzip-compressed (-z) archive file (-f) from a folder
 tar -xzf out.tar.gz                           # extract (-x) it into the current folder
@@ -11,4 +11,5 @@ tar -cf out.tar folder/                       # no compression (.tar); -j makes 
 tar -xf out.tar.gz                            # extract: modern tar detects the compression itself, so -z is optional here
 zip -r out.zip folder/ ; unzip -l out.zip     # zip files: create (-r recursive); list contents
 unzip out.zip -d dest/                        # extract a zip into a folder
-Remember: the flags are letters stuck together; -f must come last and be followed by the file name.
+tar --version                                # confirm GNU tar rather than native macOS bsdtar
+In combined short options such as -czf, put f last so the following argument is the archive name.
