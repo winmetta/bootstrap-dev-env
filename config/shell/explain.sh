@@ -158,6 +158,8 @@ git|version control; shared settings and aliases are in ~/.config/git/bootstrap-
 shellcheck|finds bugs in shell scripts|shellcheck script.sh
 shfmt|formats shell scripts consistently|shfmt -d script.sh   (diff) ; shfmt -w script.sh   (rewrite)
 just|runs project tasks defined as recipes in a justfile|just --list ; just <recipe>
+findutils|GNU Findutils package: find, xargs, locate and updatedb|explain findutils ; find --version
+diffutils|GNU Diffutils package: diff, cmp, diff3 and sdiff|explain diffutils ; diff --version
 actionlint|checks GitHub Actions workflow files for mistakes before you push|actionlint ; actionlint .github/workflows/ci.yml
 aws|the AWS command line; sign in with SSO, then s3, ec2, logs and any other service|aws sso login --profile NAME ; aws sts get-caller-identity ; aws s3 ls
 gitleaks|scans for secrets (tokens, keys, passwords) in files and git history|gitleaks git --staged --redact ; gitleaks dir .
@@ -192,19 +194,35 @@ TOOLS
 	_explain_gnu_data
 }
 
+_explain_tool_available() {
+	local name="$1" probe version
+	# These packages do not have an executable with the package's name.
+	case "$name" in
+	coreutils) probe='ls' ;;
+	findutils) probe='find' ;;
+	diffutils) probe='diff' ;;
+	*)
+		command -v "${name%% *}" >/dev/null 2>&1 || [ -d "/Applications/$name.app" ] || [ -d "$HOME/Applications/$name.app" ]
+		return
+		;;
+	esac
+	version="$(LC_ALL=C "$probe" --version 2>/dev/null)" || return 1
+	case "$version" in *"GNU $name"*) return 0 ;; *) return 1 ;; esac
+}
+
 explain-tools() {
 	local cmd desc try mark
 	# Alphabetical, case ignored.
 	_explain_tools_data | sort -f -t'|' -k1,1 | while IFS='|' read -r cmd desc try; do
 		[ -n "$cmd" ] || continue
-		if command -v "${cmd%% *}" >/dev/null 2>&1 || [ -d "/Applications/$cmd.app" ] || [ -d "$HOME/Applications/$cmd.app" ]; then
+		if _explain_tool_available "$cmd"; then
 			mark="+"
 		else
 			mark="-"
 		fi
 		printf '%s %s\n    %s\n    try: %s\n\n' "$mark" "$cmd" "$desc" "$try"
 	done
-	echo "(+ installed, - not found on PATH; run the bootstrap script again to install what is missing)"
+	echo "(+ available, - unavailable on PATH; GNU package summaries require GNU versions of their component commands)"
 	echo "(a cheat sheet with common commands and options: explain-<tool>, e.g. explain-rg; run explain for the list)"
 }
 

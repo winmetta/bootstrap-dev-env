@@ -108,6 +108,76 @@ mise_has() {
 	"$1" where "${2%%@*}" >/dev/null 2>&1
 }
 
+# Check the environment a new mise-enabled shell will use, not this shell's PATH.
+verify_gnu_command() {
+	local mise_bin="$1" cmd="$2" marker="$3" version
+	if ! version="$(LC_ALL=C "$mise_bin" exec -- "$cmd" --version 2>&1)"; then
+		log_warn "$cmd --version failed through mise"
+		return 1
+	fi
+	case "$version" in
+	*"$marker"*) return 0 ;;
+	*)
+		log_warn "$cmd through mise did not identify itself as $marker"
+		return 1
+		;;
+	esac
+}
+
+# Include companion commands whose system versions could otherwise mask a missing
+# package executable (notably awk, xargs, stat and date on macOS).
+verify_gnu_tool() {
+	local mise_bin="$1" tool="$2" commands marker cmd
+	case "${tool%%@*}" in
+	conda:coreutils)
+		commands='ls stat date'
+		marker='GNU coreutils'
+		;;
+	conda:sed)
+		commands='sed'
+		marker='GNU sed'
+		;;
+	conda:grep)
+		commands='grep'
+		marker='GNU grep'
+		;;
+	conda:findutils)
+		commands='find xargs locate updatedb'
+		marker='GNU findutils'
+		;;
+	conda:gawk)
+		commands='awk gawk'
+		marker='GNU Awk'
+		;;
+	conda:diffutils)
+		commands='diff cmp diff3 sdiff'
+		marker='GNU diffutils'
+		;;
+	conda:tar)
+		commands='tar'
+		marker='GNU tar'
+		;;
+	conda:patch)
+		commands='patch'
+		marker='GNU patch'
+		;;
+	# GNU gzip's first line lacks GNU; its version output identifies the license.
+	conda:gzip)
+		commands='gzip'
+		marker='GNU General Public License'
+		;;
+	conda:wget)
+		commands='wget'
+		marker='GNU Wget'
+		;;
+	*) return 0 ;;
+	esac
+	for cmd in $commands; do
+		attempt "verify GNU $cmd" "mise use -g $tool; mise exec -- $cmd --version" \
+			verify_gnu_command "$mise_bin" "$cmd" "$marker"
+	done
+}
+
 # Install "tool:command" entries globally with mise, skipping tools mise already has.
 mise_install_all() {
 	local entry tool cmd mise_bin
@@ -123,6 +193,7 @@ mise_install_all() {
 			log_info "installing $tool"
 			attempt "install $tool" "mise use -g $tool" "$mise_bin" use -g "$tool"
 		fi
+		verify_gnu_tool "$mise_bin" "$tool"
 		warn_if_not_mise "$cmd"
 	done
 }

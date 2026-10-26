@@ -32,6 +32,8 @@ jobs:
         run: |
           /bin/bash scripts/test-gnu-tools.sh
           /bin/bash scripts/test-gnu-tools.sh /bin/zsh
+      - name: Test GNU implementation verification on Bash 3.2
+        run: /bin/bash scripts/test-gnu-verification.sh
 
   checks:
     needs: bash32-tests
@@ -64,6 +66,8 @@ jobs:
         run: bash scripts/test-error-reporting.sh
       - name: Test GNU tool selection and help
         run: bash scripts/test-gnu-tools.sh
+      - name: Test GNU implementation verification
+        run: bash scripts/test-gnu-verification.sh
       # The hook only scans what is staged, so scan the whole history here.
       - name: Scan the git history for secrets
         run: gitleaks git --redact --no-banner

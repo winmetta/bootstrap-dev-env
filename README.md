@@ -66,6 +66,8 @@ The GNU command catalog in [config/shell/gnu-tools.txt](config/shell/gnu-tools.t
 
 ### GNU tools and command lookup
 
+After installing or finding an existing GNU package, the bootstrap checks its main commands through `mise exec -- <command> --version`, including companion commands such as `awk`, `xargs`, `stat` and `date`. Missing commands and non-GNU implementations are recorded as failures in the final summary, even when package installation succeeds. These checks do not depend on the current shell having activated mise.
+
 The explicit `conda:<package>` entries select the GNU projects from conda-forge, including **GNU Coreutils, not uutils** (mise's plain `coreutils` entry selects uutils). Packages expose their normal command names, including `awk` and `gawk`. They install under mise's data directory and do not replace system binaries. Native macOS utilities remain available by absolute path, such as `/usr/bin/sed`.
 
 Open a new terminal to activate mise, or use `mise exec -- <command>` in scripts and noninteractive shells. For example:
@@ -132,6 +134,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 
 - **Add a tool:** add a `tool:command` line to [tools/mise-common.txt](tools/mise-common.txt) (or a platform list), add a line to `_explain_tools_data` in [config/shell/explain.sh](config/shell/explain.sh), and optionally a cheat sheet.
 - **GNU command help:** update [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) (`package|command|description|example`); use a dedicated cheat sheet for a longer explanation. Examples are displayed as text and never executed. Run `bash scripts/test-gnu-tools.sh` to check coverage and help dispatch.
+- **GNU verification:** `bash scripts/test-gnu-verification.sh` tests successful and missing commands, BSD/uutils fallbacks and re-runs without installing anything. Run it with `/bin/bash` on macOS to cover Bash 3.2.
 - **Add a platform:** see [platforms/README.md](platforms/README.md).
 - The scripts run on the bash 3.2 that ships with macOS: no associative arrays, `mapfile`, `${var,,}` or other bash 4+ features. `lefthook` checks `shellcheck -s bash` and `shfmt`.
 

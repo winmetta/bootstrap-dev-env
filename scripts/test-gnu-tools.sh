@@ -56,6 +56,23 @@ explain coreutils | grep -qF "not the uutils"
 explain findutils | grep -qF "GNU Findutils"
 explain diffutils | grep -qF "GNU Diffutils"
 explain > /dev/null
+
+# Package summaries use component commands to report installed status.
+printf "%s\n" "$tools" | grep -q "^findutils|"
+printf "%s\n" "$tools" | grep -q "^diffutils|"
+(
+	find() { printf "%s\n" "find (GNU findutils) 4.10.0"; }
+	diff() { printf "%s\n" "diff (GNU diffutils) 3.12"; }
+	ls() { printf "%s\n" "ls (GNU coreutils) 9.12"; }
+	result=$(explain-tools)
+	printf "%s\n" "$result" | grep -q "^+ findutils$"
+	printf "%s\n" "$result" | grep -q "^+ diffutils$"
+	printf "%s\n" "$result" | grep -q "^+ coreutils$"
+	find() { printf "%s\n" "BSD find"; }
+	if _explain_tool_available findutils; then exit 1; fi
+	ls() { printf "%s\n" "ls (uutils coreutils) 0.5.0"; }
+	if _explain_tool_available coreutils; then exit 1; fi
+)
 ' bootstrap-gnu-tests "$ROOT_DIR"
 printf 'PASS GNU catalog: %s commands, help dispatch and option filtering (%s)\n' "$count" "$test_shell"
 
