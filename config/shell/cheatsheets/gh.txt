@@ -6,8 +6,8 @@ gh repo list <owner> --limit 100             # list an owner's repos
 gh repo view --web                            # open this repo in the browser (gh browse does the same)
 gh pr create --fill                           # open a pull request from this branch, title and body from the commits (--web to edit in the browser)
 gh pr list                                    # open pull requests; gh pr view 12 shows one, gh pr checkout 12 switches to it
-prs                                           # shell alias: PR number, title, branch and full clickable URL
-prs --state all --author @me                  # accepts the usual gh pr list filters
+pr-list                                       # open pull requests with PR url; shell alias: PR number, title, branch and full clickable URL
+pr-list --state all --author @me              # accepts the usual gh pr list filters
 gh pr list --json url --jq '.[].url'          # URLs only, without the shell alias
 gh pr checks                                  # CI status for this branch's pull request
 gh pr diff 12                                 # the changes in a pull request

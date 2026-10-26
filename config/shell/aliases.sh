@@ -38,9 +38,11 @@ alias treed='tree -d -L 2'
 #: folder tree that skips whatever .gitignore ignores
 alias treeg='tree --gitignore'
 
-# --- GitHub ---
-#: list open pull requests with their number, title, branch and full clickable URL; accepts gh pr list flags
-alias prs='gh pr list --json number,title,headRefName,url --template "{{range .}}{{printf \"#%v  %s [%s]\n%s\n\n\" .number .title .headRefName .url}}{{end}}"'
+# --- GitHub pull requests ---
+# Keep URLs on their own lines so table formatting cannot truncate them.
+# Extra gh pr list flags can be appended, for example: ghpr --state all.
+#: list open pull requests with coloured number, title, feature branch and full clickable URL; accepts gh pr list flags
+alias pr-list="gh pr list --json number,title,headRefName,url --template '{{range .}}{{printf \"%s  %s\n%sbranch: %s\n%s%s\n\n\" (autocolor \"green\" (printf \"#%v\" .number)) (autocolor \"yellow+b\" .title) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (autocolor \"cyan\" .headRefName) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (autocolor \"blue\" .url)}}{{end}}'"
 
 # --- Finder (macOS only) ---
 if [ "$(uname -s)" = Darwin ]; then
