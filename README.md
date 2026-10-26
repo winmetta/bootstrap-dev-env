@@ -62,6 +62,8 @@ explain-<tool>           a cheat sheet for one tool (explain-rg, explain-jq, ...
 
 Cheat sheets are one text file per tool in [config/shell/cheatsheets/](config/shell/cheatsheets/). To add one, drop a `<tool>.txt` file there and re-run the script.
 
+The `prs` shell alias lists open pull requests in the current repository with their number, title, branch and full URL on its own line so terminals can make it clickable. It accepts `gh pr list` flags, for example `prs --state all`, `prs --author @me` or `prs -R <owner>/<repo>`. Run `explain aliases` to see its definition.
+
 The GNU command catalog in [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) adds `explain <command>` and `explain-<command>` for every command in these GNU packages, including companion commands such as `sha256sum`, `updatedb`, `diff3` and `zgrep`. Each entry describes the command, shows an example and points to its GNU manual; a longer cheat sheet takes precedence when one exists. `explain coreutils`, `explain findutils` and `explain diffutils` describe the packages. Help includes upstream commands that are unavailable in some builds (for example SELinux tools on macOS), and marks deprecated wrappers such as `egrep`.
 
 ### GNU tools and command lookup

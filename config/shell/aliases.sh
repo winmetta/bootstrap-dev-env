@@ -38,6 +38,10 @@ alias treed='tree -d -L 2'
 #: folder tree that skips whatever .gitignore ignores
 alias treeg='tree --gitignore'
 
+# --- GitHub ---
+#: list open pull requests with their number, title, branch and full clickable URL; accepts gh pr list flags
+alias prs='gh pr list --json number,title,headRefName,url --template "{{range .}}{{printf \"#%v  %s [%s]\n%s\n\n\" .number .title .headRefName .url}}{{end}}"'
+
 # --- Finder (macOS only) ---
 if [ "$(uname -s)" = Darwin ]; then
 	#: show dot files and hidden folders in Finder (restarts Finder; Cmd+Shift+. toggles it without a restart)
