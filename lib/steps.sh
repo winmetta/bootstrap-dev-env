@@ -16,6 +16,22 @@ activate_mise_in() {
 	fi
 }
 
+# Login shells used by editors need mise tools without an interactive prompt.
+# Keep interactive activation in .zshrc and expose shims in .zprofile.
+ensure_zprofile_mise_path() {
+	local profile="${ZDOTDIR:-$HOME}/.zprofile"
+	# Expand these variables when the login shell reads the profile.
+	# shellcheck disable=SC2016
+	local snippet='export PATH="$HOME/.local/bin:${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims:$PATH"'
+	mkdir -p "$(dirname "$profile")"
+	if grep -Fqx "$snippet" "$profile" 2>/dev/null; then
+		log_ok "mise PATH already configured in $profile"
+	else
+		printf '\n%s\n' "$snippet" >>"$profile"
+		log_ok "added mise PATH to $profile"
+	fi
+}
+
 # Terminal.app starts bash as a login shell, which reads ~/.bash_profile and
 # never ~/.bashrc, so make the profile load ~/.bashrc. bash reads only the first
 # of ~/.bash_profile, ~/.bash_login and ~/.profile, so if one of the latter two
@@ -53,6 +69,7 @@ install_mise() {
 	fi
 
 	# zsh is the macOS default shell; bash is configured too for people who use it.
+	ensure_zprofile_mise_path
 	activate_mise_in "${ZDOTDIR:-$HOME}/.zshrc" zsh "$mise_bin"
 	activate_mise_in "$HOME/.bashrc" bash "$mise_bin"
 	ensure_bash_profile_loads_bashrc

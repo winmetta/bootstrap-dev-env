@@ -25,7 +25,7 @@ If a tool fails to install, the script keeps going and lists every failure with 
 ## What it does (macOS)
 
 1. Checks the platform and installs the Xcode Command Line Tools (`git`, `curl`, compiler). If it asks you to finish the installer, do that and re-run.
-2. Installs mise and activates it in `~/.zshrc` and `~/.bashrc` (and makes `~/.bash_profile` load `~/.bashrc`, because Terminal.app starts bash as a login shell).
+2. Installs mise and activates it in `~/.zshrc` and `~/.bashrc` (and makes `~/.bash_profile` load `~/.bashrc`, because Terminal.app starts bash as a login shell). Adds `~/.local/bin` and mise's shims to `PATH` in `~/.zprofile` (or `$ZDOTDIR/.zprofile`) so editors such as VS Code can find tools when running Git hooks. Respects `MISE_DATA_DIR` for the shims location. Fully quit and reopen the editor after running setup.
 3. Installs the CLI tools with mise as global defaults, including Go, `just`, and GNU Coreutils, sed, grep, Findutils, Gawk, Diffutils, tar, patch, gzip and wget: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
 4. Checks that git has a `user.name` and `user.email`, suggesting your GitHub name and `<id>+<login>@users.noreply.github.com` address (it offers to run `gh auth login` first).
 5. Installs shared git settings and aliases from [config/git/dev-env.gitconfig](config/git/dev-env.gitconfig) to `~/.config/git/bootstrap-dev-env.gitconfig`, included at the top of your global git config so your own settings win, and adds the patterns from [config/git/ignore](config/git/ignore) (such as `.DS_Store`) to your global ignore file.
@@ -61,6 +61,8 @@ explain-<tool>           a cheat sheet for one tool (explain-rg, explain-jq, ...
 ```
 
 Cheat sheets are one text file per tool in [config/shell/cheatsheets/](config/shell/cheatsheets/). To add one, drop a `<tool>.txt` file there and re-run the script.
+
+The `prs` shell alias lists open pull requests in the current repository with their number, title, branch and full URL on its own line so terminals can make it clickable. It accepts `gh pr list` flags, for example `prs --state all`, `prs --author @me` or `prs -R <owner>/<repo>`. Run `explain aliases` to see its definition.
 
 The GNU command catalog in [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) adds `explain <command>` and `explain-<command>` for every command in these GNU packages, including companion commands such as `sha256sum`, `updatedb`, `diff3` and `zgrep`. Each entry describes the command, shows an example and points to its GNU manual; a longer cheat sheet takes precedence when one exists. `explain coreutils`, `explain findutils` and `explain diffutils` describe the packages. Help includes upstream commands that are unavailable in some builds (for example SELinux tools on macOS), and marks deprecated wrappers such as `egrep`.
 
@@ -109,6 +111,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `~/.zshrc` (or `$ZDOTDIR/.zshrc`) and `~/.bashrc`                                | appended once each: mise activation, starship, zoxide, fzf, and a `source` of `fzf.sh`, `explain.sh` and `aliases.sh`; in `~/.zshrc` only, a `source` of `completion.zsh` |
 | `~/.bash_profile`                                                                | made to load `~/.bashrc` (created, or one line appended). If `~/.bash_login` or `~/.profile` is in use instead, it prints a note and leaves your files alone              |
+| `~/.zprofile` (or `$ZDOTDIR/.zprofile`)                                          | appended once: adds `~/.local/bin` and `${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims` to `PATH` for login shells and editor Git hooks                                  |
 | `~/.gitconfig` (or `~/.config/git/config` if it exists, or `$GIT_CONFIG_GLOBAL`) | an `[include]` of the shared gitconfig added at the top, so your own settings win; `user.name`, `user.email` and `core.editor` set only if missing                        |
 | `~/.config/git/ignore` (or the file `core.excludesFile` points to)               | lines from [config/git/ignore](config/git/ignore) added if missing                                                                                                        |
 | `~/.vimrc`                                                                       | `source ~/.config/bootstrap-dev-env/.vimrc` added at the top                                                                                                              |

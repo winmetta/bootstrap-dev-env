@@ -38,6 +38,12 @@ alias treed='tree -d -L 2'
 #: folder tree that skips whatever .gitignore ignores
 alias treeg='tree --gitignore'
 
+# --- GitHub pull requests ---
+# Keep URLs on their own lines so table formatting cannot truncate them.
+# Extra gh pr list flags can be appended, for example: pr-list --state all.
+#: list open pull requests with coloured number, title, feature branch, author, creation date and full clickable URL; accepts gh pr list flags
+alias pr-list="gh pr list --json number,title,headRefName,author,createdAt,url --template '{{range .}}{{printf \"%s %s\n%sbranch: %s\n%sauthor: %s\n%screated: %s (%s)\n%s%s\n\n\" (autocolor \"green\" (printf \"#%v\" .number)) (autocolor \"yellow+b\" .title) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (autocolor \"cyan\" .headRefName) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (autocolor \"cyan\" (or .author.name .author.login \"unknown\")) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (timefmt \"2006-01-02\" .createdAt) (timeago .createdAt) (printf \"%*s\" (len (printf \"#%v \" .number)) \"\") (autocolor \"blue\" .url)}}{{end}}'"
+
 # --- Finder (macOS only) ---
 if [ "$(uname -s)" = Darwin ]; then
 	#: show dot files and hidden folders in Finder (restarts Finder; Cmd+Shift+. toggles it without a restart)
