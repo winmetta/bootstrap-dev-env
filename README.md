@@ -26,7 +26,7 @@ If a tool fails to install, the script keeps going and lists every failure with 
 
 1. Checks the platform and installs the Xcode Command Line Tools (`git`, `curl`, compiler). If it asks you to finish the installer, do that and re-run.
 2. Installs mise and activates it in `~/.zshrc` and `~/.bashrc` (and makes `~/.bash_profile` load `~/.bashrc`, because Terminal.app starts bash as a login shell).
-3. Installs the CLI tools with mise as global defaults, including Go and `just` for running project tasks from a `justfile`: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `wget`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
+3. Installs the CLI tools with mise as global defaults, including Go, `just`, and GNU Coreutils, sed, grep, Findutils, Gawk, Diffutils, tar, patch, gzip and wget: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
 4. Checks that git has a `user.name` and `user.email`, suggesting your GitHub name and `<id>+<login>@users.noreply.github.com` address (it offers to run `gh auth login` first).
 5. Installs shared git settings and aliases from [config/git/dev-env.gitconfig](config/git/dev-env.gitconfig) to `~/.config/git/bootstrap-dev-env.gitconfig`, included at the top of your global git config so your own settings win, and adds the patterns from [config/git/ignore](config/git/ignore) (such as `.DS_Store`) to your global ignore file.
 6. Turns on zsh tab completion with zsh's own completion system (no framework): [config/shell/completion.zsh](config/shell/completion.zsh) gives `ls -<Tab>` and `git ch<Tab>` option and command suggestions with descriptions, and the script generates completion files into `~/.config/bootstrap-dev-env/completions/` for the installed tools that can print one (gh, docker, colima, uv, rg, fd, bat, pulumi, mise, ...). Its `source` line is appended to `~/.zshrc` like the others, and it registers zoxide's `z` completion itself, so the order of the lines does not matter. zsh only. Run `explain completion` for the keys.
@@ -62,6 +62,24 @@ explain-<tool>           a cheat sheet for one tool (explain-rg, explain-jq, ...
 
 Cheat sheets are one text file per tool in [config/shell/cheatsheets/](config/shell/cheatsheets/). To add one, drop a `<tool>.txt` file there and re-run the script.
 
+The GNU command catalog in [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) adds `explain <command>` and `explain-<command>` for every command in these GNU packages, including companion commands such as `sha256sum`, `updatedb`, `diff3` and `zgrep`. Each entry describes the command, shows an example and points to its GNU manual; a longer cheat sheet takes precedence when one exists. `explain coreutils`, `explain findutils` and `explain diffutils` describe the packages. Help includes upstream commands that are unavailable in some builds (for example SELinux tools on macOS), and marks deprecated wrappers such as `egrep`.
+
+### GNU tools and command lookup
+
+The explicit `conda:<package>` entries select the GNU projects from conda-forge, including **GNU Coreutils, not uutils** (mise's plain `coreutils` entry selects uutils). Packages expose their normal command names, including `awk` and `gawk`. They install under mise's data directory and do not replace system binaries. Native macOS utilities remain available by absolute path, such as `/usr/bin/sed`.
+
+Open a new terminal to activate mise, or use `mise exec -- <command>` in scripts and noninteractive shells. For example:
+
+```bash
+mise exec -- ls --version
+mise exec -- sed --version
+mise exec -- awk --version
+mise exec -- xargs --version
+explain command sed             # inspect every copy on PATH
+```
+
+Aliases, shell functions and builtins can still take precedence over PATH. For builtins such as `echo`, `printf`, `pwd`, `test` and `[`, use `mise exec -- env <command>` when you specifically need the external GNU implementation. The bootstrap's initial setup continues to support native macOS tools and Bash 3.2 so it can install GNU tools on a fresh machine. OS-specific steps stay in the platform files; Linux support is still planned.
+
 ## Where it changes your machine
 
 Everything the script writes, so you can review or undo it. Files it owns are replaced on every run; files you own only get a line added (never removed), and are never overwritten without asking.
@@ -75,6 +93,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 | `~/.cache/zsh/zcompdump*`, `~/.cache/zsh/zcompcache/`                                 | zsh's completion cache; the dump is deleted and rebuilt when a completion file changes                   | created by zsh                                                     |
 | `~/.config/bootstrap-dev-env/aliases.sh`                                              | shell aliases                                                                                            | [config/shell/aliases.sh](config/shell/aliases.sh)                 |
 | `~/.config/bootstrap-dev-env/explain.sh`                                              | `explain-*` helpers                                                                                      | [config/shell/explain.sh](config/shell/explain.sh)                 |
+| `~/.config/bootstrap-dev-env/gnu-tools.txt`                                           | GNU command descriptions and examples used by `explain` and `explain-tools`                              | [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt)           |
 | `~/.config/bootstrap-dev-env/cheatsheets/*.txt`                                       | one cheat sheet per tool (sheets removed from the repo stay until you delete them)                       | [config/shell/cheatsheets/](config/shell/cheatsheets/)             |
 | `~/.config/bootstrap-dev-env/fzf.sh`                                                  | fzf options and shell history settings                                                                   | [config/shell/fzf.sh](config/shell/fzf.sh)                         |
 | `~/.config/bootstrap-dev-env/.vimrc`                                                  | shared vimrc                                                                                             | [config/vim/.vimrc](config/vim/.vimrc)                             |
@@ -112,6 +131,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 ## Change it
 
 - **Add a tool:** add a `tool:command` line to [tools/mise-common.txt](tools/mise-common.txt) (or a platform list), add a line to `_explain_tools_data` in [config/shell/explain.sh](config/shell/explain.sh), and optionally a cheat sheet.
+- **GNU command help:** update [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) (`package|command|description|example`); use a dedicated cheat sheet for a longer explanation. Examples are displayed as text and never executed. Run `bash scripts/test-gnu-tools.sh` to check coverage and help dispatch.
 - **Add a platform:** see [platforms/README.md](platforms/README.md).
 - The scripts run on the bash 3.2 that ships with macOS: no associative arrays, `mapfile`, `${var,,}` or other bash 4+ features. `lefthook` checks `shellcheck -s bash` and `shfmt`.
 

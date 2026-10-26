@@ -1,0 +1,14 @@
+GNU Coreutils: GNU file, text and shell utilities (not the uutils rewrite).
+
+ls --version                                 # verify GNU Coreutils is selected
+mise exec -- ls -lah                          # use mise's GNU ls without activating a shell
+explain-tools                                # individual commands, descriptions and examples
+explain stat ; explain date ; explain timeout # GNU-specific options for common scripting needs
+env printf '%s\n' hello                      # bypass a shell builtin and run the external GNU command
+
+Installed through conda:coreutils. Plain mise coreutils selects uutils; do not use it here.
+Commands include ls, cp, mv, rm, mkdir, chmod, stat, date, sort, cut, tr, wc,
+base64, sha256sum, readlink, realpath, timeout and many more: each has explain <command>.
+Shell builtins such as echo, printf, pwd, test, [ and kill can take precedence over PATH.
+Some upstream commands (for example chcon, runcon and stdbuf) are platform/build-specific.
+Full inventory and manual: https://www.gnu.org/software/coreutils/manual/coreutils.html

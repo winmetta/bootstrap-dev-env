@@ -1,0 +1,14 @@
+GNU Diffutils: compare files and directories, including three-way and side-by-side comparisons.
+
+diff --version                               # verify GNU Diffutils is selected
+diff -u old.txt new.txt                       # unified diff, suitable for patch
+diff -ru old/ new/                            # compare directory trees recursively
+cmp a.bin b.bin                              # byte comparison
+sdiff -w 120 old.txt new.txt                  # side-by-side comparison
+diff3 -m mine.txt base.txt theirs.txt         # three-way merge output, with conflict markers if needed
+explain diff ; explain cmp ; explain diff3 ; explain sdiff
+
+Exit statuses are not boolean success/failure: diff and cmp return 1 for differences,
+0 for identical files and a larger value for errors. Handle this explicitly under set -e.
+Installed through conda:diffutils. Apply unified diffs with GNU patch: explain patch.
+Manual: https://www.gnu.org/software/diffutils/manual/diffutils.html

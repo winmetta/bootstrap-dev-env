@@ -27,6 +27,11 @@ jobs:
         run: |
           [[ "${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}" == 3.2 ]]
           /bin/bash scripts/test-error-reporting.sh
+      - name: Test GNU help on Bash 3.2 and zsh
+        shell: /bin/bash -e {0}
+        run: |
+          /bin/bash scripts/test-gnu-tools.sh
+          /bin/bash scripts/test-gnu-tools.sh /bin/zsh
 
   checks:
     needs: bash32-tests
@@ -57,6 +62,8 @@ jobs:
         run: lefthook run pre-commit --all-files
       - name: Test error reporting
         run: bash scripts/test-error-reporting.sh
+      - name: Test GNU tool selection and help
+        run: bash scripts/test-gnu-tools.sh
       # The hook only scans what is staged, so scan the whole history here.
       - name: Scan the git history for secrets
         run: gitleaks git --redact --no-banner

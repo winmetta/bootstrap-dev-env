@@ -1,6 +1,37 @@
 # "explain-*" shell helpers. bootstrap.sh copies this file to
 # ~/.config/bootstrap-dev-env/explain.sh and sources it from ~/.zshrc and ~/.bashrc.
 # Works in zsh and bash. Run `explain` to list them.
+_EXPLAIN_GNU_TOOLS="${EXPLAIN_GNU_TOOLS:-$HOME/.config/bootstrap-dev-env/gnu-tools.txt}"
+
+# GNU package|command|description|example. The examples are text, never code to run.
+_explain_gnu_data() {
+	local package cmd desc example
+	[ -f "$_EXPLAIN_GNU_TOOLS" ] || return 0
+	while IFS='|' read -r package cmd desc example; do
+		case "$package" in "" | \#*) continue ;; esac
+		printf '%s|GNU %s: %s|%s\n' "$cmd" "$package" "$desc" "$example"
+	done <"$_EXPLAIN_GNU_TOOLS"
+}
+
+_explain_gnu_command() {
+	local package cmd desc example manual help_cmd
+	while IFS='|' read -r package cmd desc example; do
+		[ "$cmd" = "$1" ] || continue
+		printf '%s (GNU %s): %s\n\n%s\n\n' "$cmd" "$package" "$desc" "$example"
+		# GNU test treats --help as an expression; '[' provides its help/version.
+		help_cmd="$cmd"
+		[ "$cmd" != test ] || help_cmd='['
+		printf "env '%s' --help     # full GNU options (bypasses shell builtins)\n" "$help_cmd"
+		printf "env '%s' --version  # check the selected implementation\n" "$help_cmd"
+		printf 'Use mise exec -- <command> if mise is not active. Some commands are platform/build-specific.\n'
+		# GNU patch is documented in the Diffutils manual.
+		manual="$package"
+		[ "$package" != patch ] || manual=diffutils
+		printf 'GNU manual: https://www.gnu.org/software/%s/manual/\n' "$manual"
+		return 0
+	done <"$_EXPLAIN_GNU_TOOLS"
+	return 1
+}
 
 # explain <name> is the same as explain-<name>:  explain rg, explain ssh, explain tools,
 # explain git aliases (= explain-git-aliases), explain command rg.
@@ -94,6 +125,7 @@ markdown|markdownlint prettier
 languages|python node npm npx uv uvx
 network|curl wget ssh scp rsync ssh-keygen ssh-copy-id ssh-add
 system|df du top free ps kill lsof chmod tail diff tar gzip
+GNU packages|coreutils sed grep findutils gawk diffutils tar patch gzip wget
 macOS|security
 GROUPS
 	# Any sheet not named above (a newly added one) still shows up.
@@ -142,7 +174,6 @@ uv|fast Python package, project and tool manager (pip, venv and pipx in one); uv
 python3|Python 3 (latest stable; repos pin their own version)|python3 --version ; python3 -m venv .venv
 vim|terminal editor with the shared ~/.config/bootstrap-dev-env/.vimrc and plugins (surround, commentary, Copilot)|vim file ; :help surround
 bash|bash 5 (macOS ships 3.2): test scripts on both versions|bash --version ; /bin/bash --version
-wget|download files from the web|wget https://example.com/file.zip
 rg|ripgrep: fast text search that respects .gitignore (a better grep -r)|rg "TODO" ; rg -t py "import" ; rg -l foo
 docker|builds and runs containers; needs an engine, which colima provides (no Docker Desktop)|docker run --rm hello-world ; docker ps ; docker logs -f NAME
 docker-compose|runs several containers from one compose.yaml; also available as docker compose|docker compose up -d ; docker compose logs -f ; docker compose down
@@ -158,6 +189,7 @@ zoxide|smarter cd that learns the folders you use|z projects ; z foo bar ; zi
 iTerm|terminal app with the bootstrap-dev-env profile|open ~/Applications/iTerm.app
 zed|Zed editor; its zed command is also git's commit-message editor|zed . ; zed --wait file
 TOOLS
+	_explain_gnu_data
 }
 
 explain-tools() {
@@ -295,15 +327,17 @@ explain-starship() {
 # --- Cheat sheets: one text file per tool in ~/.config/bootstrap-dev-env/cheatsheets ---
 # Each <name>.txt becomes the command explain-<name>. To add one, drop a file in
 # config/shell/cheatsheets/ and run the bootstrap (or copy it there).
-_EXPLAIN_SHEETS="$HOME/.config/bootstrap-dev-env/cheatsheets"
+_EXPLAIN_SHEETS="${EXPLAIN_SHEETS:-$HOME/.config/bootstrap-dev-env/cheatsheets}"
 
 _explain_sheet_names() {
-	local f out=""
+	local f
 	# shellcheck disable=SC2045 # our own simple *.txt names; a glob would make zsh error out on an empty folder
-	for f in $(ls "$_EXPLAIN_SHEETS" 2>/dev/null); do
-		out="$out ${f%.txt}"
-	done
-	printf '%s' "${out# }"
+	{
+		for f in $(ls "$_EXPLAIN_SHEETS" 2>/dev/null); do
+			printf '%s\n' "${f%.txt}"
+		done
+		_explain_gnu_data | cut -d'|' -f1
+	} | sort -u | tr '\n' ' '
 }
 
 _explain_cheatsheet() {
@@ -321,19 +355,33 @@ for _explain_f in $(ls "$_EXPLAIN_SHEETS" 2>/dev/null); do
 done
 unset _explain_f
 
+# Generate help for catalog commands without a longer, dedicated cheat sheet.
+# This includes '['; examples are never evaluated, only the owned command names.
+if [ -f "$_EXPLAIN_GNU_TOOLS" ]; then
+	while IFS='|' read -r _explain_pkg _explain_cmd _explain_desc _explain_example; do
+		case "$_explain_pkg" in "" | \#*) continue ;; esac
+		if ! type "explain-$_explain_cmd" >/dev/null 2>&1; then
+			# zsh needs the '[' function name quoted; Bash requires it unquoted.
+			if [ -n "${ZSH_VERSION:-}" ]; then
+				eval "'explain-$_explain_cmd'() { _explain_gnu_command '$_explain_cmd'; }"
+			else
+				eval "explain-$_explain_cmd() { _explain_gnu_command '$_explain_cmd'; }"
+			fi
+		fi
+	done <"$_EXPLAIN_GNU_TOOLS"
+fi
+unset _explain_pkg _explain_cmd _explain_desc _explain_example
+
 # Names people type for the same tool.
 explain-zoxide() { explain-z; }
 explain-python3() { explain-python; }
 explain-ripgrep() { explain-rg; }
 explain-dh() { explain-df; }
-explain-head() { explain-tail; }
 explain-pgrep() { explain-ps; }
 explain-pkill() { explain-kill; }
 explain-killall() { explain-kill; }
 explain-zip() { explain-tar; }
 explain-unzip() { explain-tar; }
-explain-chown() { explain-chmod; }
-explain-cmp() { explain-diff; }
 explain-compose() { explain-docker-compose; }
 explain-lima() { explain-colima; }
 explain-limactl() { explain-colima; }

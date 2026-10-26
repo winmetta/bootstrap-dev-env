@@ -1,4 +1,3 @@
-# Extra tools for macOS only: modern replacements for what Apple ships (bash 3.2, no wget or tree).
+# Extra tools for macOS only: modern bash (Apple ships 3.2) and tree.
 conda:bash:bash
-conda:wget:wget
 conda:tree:tree

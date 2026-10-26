@@ -1,0 +1,146 @@
+# GNU package|command|description|example (examples are displayed, never executed).
+# GNU upstream inventories: https://www.gnu.org/manual/manual.html
+# Coreutils: https://github.com/coreutils/coreutils/blob/master/README
+# Some commands depend on the platform/build; their help remains available everywhere.
+coreutils|[|test file attributes and compare strings or numbers; the closing ] is required|env '[' -f README.md ']'
+coreutils|arch|print machine architecture; available in some builds|arch
+coreutils|b2sum|compute or check BLAKE2 checksums|b2sum file ; b2sum --check checksums.txt
+coreutils|base32|encode or decode Base32 data|base32 file ; base32 --decode encoded.txt
+coreutils|base64|encode or decode Base64 data|base64 file ; base64 --decode encoded.txt
+coreutils|basename|remove a directory prefix and optional suffix from a path|basename /tmp/report.txt .txt
+coreutils|basenc|encode or decode data using a selected base encoding|basenc --base64 file ; basenc --base64 --decode encoded.txt
+coreutils|cat|concatenate files and print their contents|cat -n README.md
+coreutils|chcon|change SELinux file security contexts; requires SELinux support|chcon --help
+coreutils|chgrp|change the group that owns a file|chgrp developers file
+coreutils|chmod|change file access permissions|chmod u+x script.sh
+coreutils|chown|change the user and group that own a file|chown USER:GROUP file
+coreutils|chroot|run a command with a different filesystem root; normally needs privileges|chroot --help
+coreutils|cksum|compute file checksums with selectable algorithms|cksum --algorithm=sha256 file
+coreutils|comm|compare two sorted files and show unique or common lines|comm -12 sorted-a.txt sorted-b.txt
+coreutils|coreutils|GNU Coreutils package and optional multi-call executable; not uutils|ls --version ; coreutils --help
+coreutils|cp|copy files and directories|cp -a source/ destination/
+coreutils|csplit|split a file at matching lines into numbered pieces|csplit file '/^SECTION/' '{*}'
+coreutils|cut|extract selected fields or character positions|cut -d: -f1 /etc/passwd
+coreutils|date|display, parse and calculate dates|date -d 'tomorrow' +%F ; date -u +%FT%TZ
+coreutils|dd|copy and convert byte streams; an incorrect destination can overwrite data|dd if=input.bin of=copy.bin bs=1M status=progress
+coreutils|df|report filesystem free space|df -h .
+coreutils|dir|list directory contents in columns|dir -al
+coreutils|dircolors|generate shell settings for ls colors|dircolors --print-database
+coreutils|dirname|remove the final component of a path|dirname /tmp/report.txt
+coreutils|du|estimate file and directory disk usage|du -h --max-depth=1 .
+coreutils|echo|print arguments; shells usually use a builtin, env selects the external GNU tool|env echo -n hello
+coreutils|env|run a command with environment variables set or removed|env MODE=test command ; env --unset=MODE command
+coreutils|expand|convert tab characters to spaces|expand -t 4 file
+coreutils|expr|evaluate string or integer expressions; quote shell metacharacters|expr 2 + 3
+coreutils|factor|factor integers into prime numbers|factor 360
+coreutils|false|return an unsuccessful status; shells usually use a builtin|env false
+coreutils|fmt|rewrap paragraphs of text|fmt -w 80 notes.txt
+coreutils|fold|wrap long input lines to a chosen width|fold -s -w 80 notes.txt
+coreutils|groups|print the groups a user belongs to|groups
+coreutils|head|print the first lines or bytes of input|head -n 20 file ; head -c 100 file
+coreutils|hostid|print the numeric host identifier|hostid
+coreutils|hostname|print or set the host name; available in some builds|hostname
+coreutils|id|print user and group identifiers|id ; id -u
+coreutils|install|copy files and set permissions in one operation|install -m 755 script.sh destination/script.sh
+coreutils|join|join two files on a common field; sort both on that field first|join sorted-a.txt sorted-b.txt
+coreutils|kill|send a signal to a process; shells usually use a builtin|env kill -l
+coreutils|link|create a hard link to a file|link original new-link
+coreutils|ln|create hard or symbolic links|ln -s target shortcut
+coreutils|logname|print the login name for the current session|logname
+coreutils|ls|list files with GNU formatting, sorting and color options|ls --color=auto -lah ; ls --time-style=long-iso -l
+coreutils|md5sum|compute or check MD5 checksums; not suitable for security verification|md5sum file
+coreutils|mkdir|create directories|mkdir -p path/to/folder
+coreutils|mkfifo|create a named pipe for communicating between processes|mkfifo named-pipe
+coreutils|mknod|create special device files; normally needs privileges|mknod --help
+coreutils|mktemp|create a temporary file or directory with a unique name|mktemp ; mktemp -d
+coreutils|mv|move or rename files|mv -i old-name new-name
+coreutils|nice|run a command with an adjusted scheduling priority|nice -n 10 command
+coreutils|nl|number lines with configurable formatting|nl -ba file
+coreutils|nohup|run a command immune to hangup signals; & backgrounds it|nohup command >output.log 2>&1 &
+coreutils|nproc|print the number of processing units available to this process|nproc
+coreutils|numfmt|convert numbers to and from human-readable sizes|numfmt --to=iec 1048576
+coreutils|od|display bytes in octal, hexadecimal or other formats|od -An -tx1 file
+coreutils|paste|combine corresponding lines from files|paste -d, names.txt values.txt
+coreutils|pathchk|check path names for validity or portability|pathchk -p path/to/file
+coreutils|pinky|display brief information about logged-in users|pinky
+coreutils|pr|format text for printing with headers and pagination|pr -h Report file
+coreutils|printenv|print environment variables|printenv PATH
+coreutils|printf|format text; shells usually use a builtin, env selects GNU printf|env printf '%s\n' hello
+coreutils|ptx|produce a permuted index of words in text|ptx -f document.txt
+coreutils|pwd|print the current directory; shells usually use a builtin|env pwd -P
+coreutils|readlink|print a symbolic link target or resolve a path|readlink shortcut ; readlink -f path
+coreutils|realpath|print resolved absolute paths|realpath file ; realpath --relative-to=. /tmp/file
+coreutils|rm|remove files or directories; deleted data may be unrecoverable|rm -i file
+coreutils|rmdir|remove empty directories|rmdir empty-folder
+coreutils|runcon|run a command in a SELinux security context; requires SELinux support|runcon --help
+coreutils|seq|print a sequence of numbers|seq 1 5 ; seq 0 2 10
+coreutils|sha1sum|compute or check SHA-1 checksums; prefer SHA-256 for security|sha1sum file
+coreutils|sha224sum|compute or check SHA-224 checksums|sha224sum file
+coreutils|sha256sum|compute or check SHA-256 checksums|sha256sum file ; sha256sum --check checksums.txt
+coreutils|sha384sum|compute or check SHA-384 checksums|sha384sum file
+coreutils|sha512sum|compute or check SHA-512 checksums|sha512sum file
+coreutils|shred|overwrite file contents; reliable erasure is not guaranteed on SSDs or snapshots|shred --help
+coreutils|shuf|shuffle input or choose random lines|shuf -n 5 file ; shuf -i 1-100 -n 1
+coreutils|sleep|pause for an interval|sleep 0.5 ; sleep 2m
+coreutils|sort|sort lines numerically, lexically or by selected fields|sort -n numbers.txt ; sort -t, -k2,2 data.txt
+coreutils|split|split input into files by line count or size|split -l 1000 file part-
+coreutils|stat|display file metadata with GNU format specifiers|stat -c '%n %s bytes' file
+coreutils|stdbuf|adjust stream buffering for a command; available in some builds|stdbuf -oL command
+coreutils|stty|display or change terminal settings|stty -a
+coreutils|sum|compute legacy checksums; prefer cksum or sha256sum|sum file
+coreutils|sync|flush pending filesystem writes|sync
+coreutils|tac|print lines in reverse order|tac file
+coreutils|tail|print the last lines or follow a changing file|tail -n 20 file ; tail -F app.log
+coreutils|tee|copy standard input to files and standard output|command | tee -a output.log
+coreutils|test|test file attributes and compare strings or numbers; shells usually use a builtin|env test -f README.md
+coreutils|timeout|run a command with a time limit|timeout 30s command
+coreutils|touch|create an empty file or update timestamps|touch file ; touch -d 'yesterday' file
+coreutils|tr|translate, delete or squeeze characters|tr '[:lower:]' '[:upper:]' < file ; tr -d '\r' < file
+coreutils|true|return a successful status; shells usually use a builtin|env true
+coreutils|truncate|set file size; shrinking a file discards data|truncate --help
+coreutils|tsort|topologically sort pairs describing dependency relationships|tsort dependencies.txt
+coreutils|tty|print the terminal connected to standard input|tty
+coreutils|uname|print operating system and architecture information|uname -a
+coreutils|unexpand|convert spaces to tabs|unexpand -a -t 4 file
+coreutils|uniq|filter or count adjacent duplicate lines; sort first for all duplicates|sort file | uniq -c
+coreutils|unlink|remove a single file name; data can be lost|unlink --help
+coreutils|uptime|print system uptime and load; available in some builds|uptime
+coreutils|users|print names of logged-in users|users
+coreutils|vdir|list directory contents in long format|vdir -h
+coreutils|wc|count lines, words, characters or bytes|wc -l file ; wc -c file
+coreutils|who|show logged-in users and sessions|who
+coreutils|whoami|print the effective user name|whoami
+coreutils|yes|repeat a string until the reader stops or the process is interrupted|yes hello | head -n 3
+sed|sed|GNU stream editor for substitutions and line-oriented transformations|sed -E 's/[[:space:]]+/ /g' file ; sed -i.bak 's/old/new/g' file
+grep|grep|GNU line search with basic, extended and Perl-compatible regular expressions|grep -En 'error|warning' app.log ; grep -P '\d+' file
+grep|egrep|deprecated GNU grep -E wrapper; prefer grep -E|grep -E 'error|warning' app.log
+grep|fgrep|deprecated GNU grep -F wrapper; prefer grep -F|grep -F 'literal.text' file
+findutils|find|GNU file search with predicates, formatted output and batched commands|find . -type f -printf '%p\n' ; find . -name '*.sh' -exec shellcheck {} +
+findutils|xargs|build command arguments from input; -0 handles names safely and -r skips empty input|find . -type f -print0 | xargs -0 -r wc -l
+findutils|locate|search file names in a database; run updatedb to refresh it|locate --database=files.db README
+findutils|updatedb|build a locate database; scope it to folders you want indexed|updatedb --localpaths="$HOME/projects" --output=files.db
+gawk|awk|GNU Awk text processing with fields, patterns and calculations|awk -F: '{print $1}' /etc/passwd
+gawk|gawk|GNU Awk, including GNU-specific functions and extensions|gawk '{sum += $2} END {print sum}' file
+gawk|gawkbug|prepare a GNU Awk bug report; review before sending anything|gawkbug --help
+diffutils|cmp|compare files byte by byte; exit 1 means they differ|cmp a.bin b.bin ; cmp -s a.bin b.bin
+diffutils|diff|compare text files or directory trees; exit 1 means differences|diff -u old.txt new.txt ; diff -ru old/ new/
+diffutils|diff3|compare three files for three-way merges|diff3 -m mine.txt base.txt theirs.txt
+diffutils|sdiff|show or interactively merge side-by-side differences|sdiff -w 120 old.txt new.txt
+tar|tar|GNU archive creation, listing and extraction|tar -czf archive.tar.gz folder/ ; tar -tf archive.tar.gz
+tar|rmt|GNU tar remote tape protocol helper; optional and normally used internally|tar --help
+patch|patch|apply a unified diff; preview changes with --dry-run|patch --dry-run -p1 < change.patch
+gzip|gzip|GNU gzip compression; -k keeps the original file|gzip -k file.log ; gzip -t file.log.gz
+gzip|gunzip|decompress gzip files; -k keeps the compressed original|gunzip -k file.log.gz
+gzip|zcat|print gzip-compressed contents without modifying the file|zcat file.log.gz
+gzip|gzexe|compress an executable into a self-extracting script; changes the file|gzexe --help
+gzip|uncompress|decode legacy compress-format files; support depends on the input format|uncompress -c file.Z
+gzip|zcmp|compare compressed files byte by byte|zcmp a.gz b.gz
+gzip|zdiff|compare compressed text files|zdiff -u old.gz new.gz
+gzip|zegrep|deprecated compressed grep -E wrapper; prefer zgrep -E|zgrep -E 'error|warning' file.log.gz
+gzip|zfgrep|deprecated compressed grep -F wrapper; prefer zgrep -F|zgrep -F 'literal.text' file.log.gz
+gzip|zforce|add .gz suffixes to gzip files missing them; renames files|zforce --help
+gzip|zgrep|search compressed files without extracting them first|zgrep -n error file.log.gz
+gzip|zless|page through compressed text files; requires less|zless file.log.gz
+gzip|zmore|page through compressed text files|zmore file.log.gz
+gzip|znew|convert legacy .Z files to gzip format; changes files|znew --help
+wget|wget|GNU HTTP, HTTPS and FTP downloader with resume and recursive options|wget -c https://example.org/archive.tar.gz ; wget -O output.txt https://example.org/file
