@@ -395,7 +395,7 @@
         "Red Component": 1
       },
       "Custom Command": "No",
-      "Custom Directory": "No",
+      "Custom Directory": "Recycle",
       "Description": "Default",
       "Disable Window Resizing": true,
       "Flashing Bell": false,
@@ -559,7 +559,7 @@
       "Vertical Spacing": 1,
       "Visual Bell": true,
       "Window Type": 0,
-      "Working Directory": "/Users/alo"
+      "Working Directory": ""
     }
   ]
 }
