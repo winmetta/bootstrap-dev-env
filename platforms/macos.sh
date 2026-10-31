@@ -89,6 +89,46 @@ configure_zed() {
 		link_zed_cli
 }
 
+# True if the AWS Session Manager plugin is on PATH or already in ~/.local/bin.
+session_manager_plugin_installed() {
+	command -v session-manager-plugin >/dev/null 2>&1 || [[ -x "$HOME/.local/bin/session-manager-plugin" ]]
+}
+
+# Download AWS's Session Manager plugin bundle (no mise package or admin rights
+# needed; AWS's own installer wants sudo, but the binary runs from anywhere) and
+# copy the binary to ~/.local/bin. `aws ssm start-session` needs it.
+install_session_manager_plugin() {
+	local arch tmp
+	case "$(uname -m)" in
+	arm64) arch=mac_arm64 ;;
+	x86_64) arch=mac ;;
+	*) return 1 ;;
+	esac
+	tmp="$(mktemp -d)" || return 1
+	if curl -fsSL -o "$tmp/bundle.zip" "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/$arch/sessionmanager-bundle.zip" &&
+		unzip -q "$tmp/bundle.zip" -d "$tmp/bundle" &&
+		mkdir -p "$HOME/.local/bin" &&
+		cp "$tmp/bundle/sessionmanager-bundle/bin/session-manager-plugin" "$HOME/.local/bin/session-manager-plugin"; then
+		rm -rf "${tmp:?}"
+		return 0
+	fi
+	rm -rf "${tmp:?}"
+	return 1
+}
+
+# The AWS CLI (installed by mise) cannot open `aws ssm start-session` without it.
+configure_session_manager_plugin() {
+	log_step "AWS Session Manager plugin"
+	if session_manager_plugin_installed; then
+		log_ok "session-manager-plugin already installed"
+		return
+	fi
+	log_info "downloading the Session Manager plugin (about 4 MB)"
+	attempt "install the AWS Session Manager plugin" \
+		"download sessionmanager-bundle.zip from https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-macos-overview.html and copy bin/session-manager-plugin to ~/.local/bin" \
+		install_session_manager_plugin
+}
+
 # Stop macOS from writing .DS_Store files on network shares and USB drives. (The
 # global git ignore file hides them in git; this keeps them off other people's
 # drives and servers in the first place.) Existing .DS_Store files are not
@@ -227,6 +267,7 @@ platform_extras() {
 	install_fonts
 	configure_iterm
 	configure_zed
+	configure_session_manager_plugin
 }
 
 # Run after the platform-neutral steps (the git editor choice needs Zed first).
