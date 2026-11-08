@@ -19,8 +19,6 @@ pre-commit:
       run: markdownlint-cli2 {staged_files}
     prettier:
       glob: "*.md"
-      # CLAUDE.md is a symlink to AGENTS.md and prettier refuses symlinks.
-      exclude: "CLAUDE.md"
       run: prettier --check {staged_files}
     # The iTerm profile must stay valid JSON, or iTerm silently ignores it.
     json:
