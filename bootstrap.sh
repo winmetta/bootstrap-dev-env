@@ -72,6 +72,8 @@ COMPLETION_GENERATORS=(
 )
 ALIASES_SRC="$ROOT_DIR/config/shell/aliases.sh"
 ALIASES_DEST="$CONFIG_HOME/aliases.sh"
+HISTCLEAN_SRC="$ROOT_DIR/config/shell/histclean.zsh"
+HISTCLEAN_DEST="$CONFIG_HOME/histclean.zsh"
 SHEETS_SRC="$ROOT_DIR/config/shell/cheatsheets"
 SHEETS_DEST="$CONFIG_HOME/cheatsheets"
 EXPLAIN_SRC="$ROOT_DIR/config/shell/explain.sh"
@@ -195,6 +197,7 @@ main() {
 	configure_shell_tools
 	configure_explain
 	configure_aliases
+	configure_histclean
 	configure_vim
 	platform_extras
 	configure_git_editor
