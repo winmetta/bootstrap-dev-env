@@ -298,6 +298,33 @@ configure_aliases() {
 	log_info "Run 'explain-aliases' in a new terminal to see them."
 }
 
+# histclean (zsh only): a shell function that moves junk entries out of the zsh history
+# file (commands pasted with their "$ " prompt, ": " or "# " lines) into a review file, so
+# Ctrl-R stays useful. Copy shell/histclean.zsh to ~/.config/bootstrap-dev-env/histclean.zsh
+# (replaced on every run, it is ours) and source it from ~/.zshrc, once.
+configure_histclean_in() {
+	local rc="$1"
+	if grep -qF "$HISTCLEAN_DEST" "$rc" 2>/dev/null; then
+		log_ok "histclean already sourced in $rc"
+	else
+		printf '%s\n' "[ -f \"$HISTCLEAN_DEST\" ] && . \"$HISTCLEAN_DEST\"" >>"$rc"
+		log_ok "sourced histclean in $rc"
+	fi
+}
+
+install_histclean() {
+	mkdir -p "$(dirname "$HISTCLEAN_DEST")" && cp "$HISTCLEAN_SRC" "$HISTCLEAN_DEST" || return 1
+	configure_histclean_in "${ZDOTDIR:-$HOME}/.zshrc"
+}
+
+configure_histclean() {
+	log_step "shell history cleanup (histclean, zsh)"
+	attempt "install histclean" \
+		"copy config/shell/histclean.zsh to '$HISTCLEAN_DEST' and add '. $HISTCLEAN_DEST' to ~/.zshrc" \
+		install_histclean
+	log_info "Run 'histclean -h' in a new zsh terminal for help; 'histclean -n' previews what it would remove."
+}
+
 # Zsh tab completion with nothing but zsh. config/shell/completion.zsh turns zsh's own
 # completion system on (ls, git, grep, ssh, curl and tar already ship completion with
 # macOS). The tools mise installs do not ship zsh completion, so each one that can print
