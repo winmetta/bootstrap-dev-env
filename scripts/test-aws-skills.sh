@@ -19,6 +19,10 @@ run_aws() {
 	if [[ "$6" == claude-code && -n "${CLAUDE_CONFIG_DIR:-}" ]]; then
 		root="$(claude_skills_root)"
 	fi
+	case "$root" in
+	"$TEST_SKILLS_ROOT"/*) ;;
+	*) return 2 ;;
+	esac
 	CALLS+=("$4:$6")
 	mkdir -p "$root/$4"
 	printf 'catalog content\n' >"$root/$4/SKILL.md"
