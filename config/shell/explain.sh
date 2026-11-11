@@ -161,7 +161,7 @@ just|runs project tasks defined as recipes in a justfile|just --list ; just <rec
 findutils|GNU Findutils package: find, xargs, locate and updatedb|explain findutils ; find --version
 diffutils|GNU Diffutils package: diff, cmp, diff3 and sdiff|explain diffutils ; diff --version
 actionlint|checks GitHub Actions workflow files for mistakes before you push|actionlint ; actionlint .github/workflows/ci.yml
-aws|the AWS command line; sign in with SSO, then s3, ec2, logs and any other service|aws sso login --profile NAME ; aws sts get-caller-identity ; aws s3 ls
+aws|the AWS command line; sign in with SSO, then s3, ec2, logs and any other service|aws sso login --profile NAME ; aws sts get-caller-identity --profile NAME ; aws s3 ls --profile NAME
 gitleaks|scans for secrets (tokens, keys, passwords) in files and git history|gitleaks git --staged --redact ; gitleaks dir .
 lefthook|runs the git hooks in lefthook.yml (checks before each commit, commit-message check)|lefthook install ; lefthook run pre-commit
 markdownlint-cli2|checks Markdown files for style problems (rules in .markdownlint.json); --fix repairs what it can|markdownlint-cli2 README.md ; markdownlint-cli2 --fix README.md

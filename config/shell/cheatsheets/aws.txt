@@ -3,10 +3,10 @@ aws: the AWS command line. Agents confirm with the user before anything that cre
 aws --version                                 # which version is installed (mise installs it; there is no Homebrew copy to update)
 aws configure sso                             # set up a profile that signs in through IAM Identity Center (SSO): the recommended way, no long-lived keys
 aws sso login --profile NAME                  # sign in (opens a browser); the session lasts a few hours
+export AWS_PROFILE=NAME                       # select that profile for subsequent commands; login alone does not select it
 aws sts get-caller-identity                   # who am I? shows the account id and role: the first thing to run when something fails
 aws configure list-profiles                   # the profiles in ~/.aws/config
 aws configure list                            # which profile, region and credentials are in effect right now, and where each comes from
-export AWS_PROFILE=NAME                       # use a profile for everything in this shell (or add --profile NAME to one command)
 aws s3 ls                                     # list your buckets; aws s3 ls s3://bucket/prefix/ lists inside one
 aws s3 cp file.txt s3://bucket/key            # upload a file; aws s3 cp s3://bucket/key . downloads it
 aws s3 sync ./dist s3://bucket/path --dryrun  # preview a folder sync (--dryrun); drop --dryrun to do it
@@ -26,3 +26,15 @@ aws ... --debug                               # show the full request log when a
 aws help ; aws s3 help ; aws s3 cp help       # the built-in manual for any command, subcommand or action
 Never put access keys in files inside a repo. Prefer SSO profiles over aws configure with long-lived keys.
 Writes (create, update, delete, sync --delete, put-*) change real resources: preview or dry-run first.
+
+AWS skills (optional; use the same AWS_PROFILE; catalog Region is us-east-1):
+aws login --profile NAME                      # alternative browser sign-in using AWS console access, when not using SSO
+aws agent-toolkit search-skills --search-query serverless --region us-east-1
+aws agent-toolkit list-installed-skills       # inspect local toolkit-managed installations
+aws agent-toolkit add-skill --skill-name aws-iam --agent universal --region us-east-1
+aws agent-toolkit add-skill --skill-name aws-iam --agent claude-code --region us-east-1
+aws agent-toolkit check-skill-updates --all --region us-east-1
+aws agent-toolkit remove-skill --skill-name launch-with-aws --agent universal
+aws agent-toolkit remove-skill --skill-name launch-with-aws --agent claude-code
+                                              # only if unwanted: removes the selected local skill from each agent
+See README.md in bootstrap-dev-env for the selective setup script and nine example skills.
