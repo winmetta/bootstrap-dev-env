@@ -11,9 +11,13 @@ CALLS=()
 
 run_aws() {
 	[[ "$1" == agent-toolkit && "$2" == add-skill && "$3" == --skill-name && "$5" == --agent ]] || return 2
+	local root="$TEST_SKILLS_ROOT/$6"
+	if [[ "$6" == claude-code && -n "${CLAUDE_CONFIG_DIR:-}" ]]; then
+		root="$(claude_skills_root)"
+	fi
 	CALLS+=("$4:$6")
-	mkdir -p "$TEST_SKILLS_ROOT/$6/$4"
-	printf 'catalog content\n' >"$TEST_SKILLS_ROOT/$6/$4/SKILL.md"
+	mkdir -p "$root/$4"
+	printf 'catalog content\n' >"$root/$4/SKILL.md"
 }
 
 check_preservation() {
@@ -71,11 +75,27 @@ check_arguments() {
 	printf 'PASS invalid names are rejected before any writes\n'
 }
 
+check_claude_override() {
+	local custom="$TEST_SKILLS_ROOT/custom claude"
+	mkdir -p "$custom/skills/aws-iam"
+	printf 'custom installation\n' >"$custom/skills/aws-iam/SKILL.md"
+	[[ "$(CLAUDE_CONFIG_DIR="$custom" claude_skills_root)" == "$custom/skills" ]]
+	CLAUDE_CONFIG_DIR="$custom" install_skill aws-iam claude-code "$custom/skills"
+	[[ ${#CALLS[@]} == 3 ]]
+	CLAUDE_CONFIG_DIR="$custom" install_skill aws-serverless claude-code "$custom/skills"
+	[[ -f "$custom/skills/aws-serverless/SKILL.md" && ${#CALLS[@]} == 4 ]]
+	[[ "$(CLAUDE_CONFIG_DIR="$TEST_SKILLS_ROOT/missing" claude_skills_root)" == "$HOME/.claude/skills" ]]
+	[[ "$(CLAUDE_CONFIG_DIR='' claude_skills_root)" == "$HOME/.claude/skills" ]]
+	[[ "$(CLAUDE_CONFIG_DIR='~' claude_skills_root)" == "$HOME/skills" ]]
+	printf 'PASS custom Claude directories are resolved and preserved; absent overrides use the default\n'
+}
+
 main() {
 	check_arguments
 	check_preservation
 	check_incomplete_directory
 	check_unrequested_skill
+	check_claude_override
 	check_failure_continuation
 }
 

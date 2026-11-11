@@ -40,6 +40,20 @@ run_aws() {
 	"$mise_bin" exec -- aws "$@" --region us-east-1 --no-cli-pager --no-cli-auto-prompt
 }
 
+claude_skills_root() {
+	local config="${CLAUDE_CONFIG_DIR:-}"
+	case "$config" in
+	\~) config="$HOME" ;;
+	\~/*) config="$HOME/${config#\~/}" ;;
+	esac
+	# AWS CLI uses an override only when its expanded directory already exists.
+	if [[ -n "$config" && -d "$config" ]]; then
+		printf '%s/skills\n' "${config%/}"
+	else
+		printf '%s/.claude/skills\n' "$HOME"
+	fi
+}
+
 install_skill() {
 	local skill="$1" agent="$2" root="$3" target
 	target="$root/$skill"
@@ -61,7 +75,7 @@ install_selected_skills() {
 		for agent in universal claude-code; do
 			case "$agent" in
 			universal) root="$HOME/.agents/skills" ;;
-			claude-code) root="$HOME/.claude/skills" ;;
+			claude-code) root="$(claude_skills_root)" ;;
 			esac
 			attempt "install $skill for $agent" \
 				"bash scripts/setup-aws-skills.sh $skill (existing copies are kept)" \
@@ -88,7 +102,7 @@ main() {
 		return 1
 	}
 	# Explicit agent directories make detection work even before the first agent launch.
-	mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
+	mkdir -p "$HOME/.agents/skills" "$(claude_skills_root)"
 	install_selected_skills "$@"
 	if ((${#FAILURES[@]} > 0)); then
 		printf '%s\n' "AWS skills setup had failures:" "${FAILURES[@]}" >&2

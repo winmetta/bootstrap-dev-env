@@ -87,7 +87,7 @@ bash scripts/setup-aws-skills.sh \
   launch-with-aws signing-in-to-aws
 ```
 
-The script uses the mise-managed CLI, checks for toolkit support, and installs the latest catalog version of each missing skill. It preserves existing skill directories and their versions, including manually installed skills; it reports an incomplete directory instead of overwriting it. Failures are reported while the remaining installations are attempted; rerun the same command to retry missing copies. Catalog requests use `us-east-1`, independently of your workload Region. No cloud resources, MCP configuration, credentials or project rules are changed by this script. Restart both agents after installation.
+The script uses the mise-managed CLI, checks for toolkit support, and installs the latest catalog version of each missing skill. It preserves existing skill directories and their versions, including manually installed skills; it reports an incomplete directory instead of overwriting it. For Claude Code, it honors an existing `CLAUDE_CONFIG_DIR` directory (including `~` and `~/` prefixes); an unset, empty or nonexistent override falls back to `~/.claude`, matching AWS CLI behavior. Failures are reported while the remaining installations are attempted; rerun the same command to retry missing copies. Catalog requests use `us-east-1`, independently of your workload Region. No cloud resources, MCP configuration, credentials or project rules are changed by this script. Restart both agents after installation.
 
 Inspect installations and check for available updates separately:
 
@@ -201,7 +201,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 | `~/.docker/cli-plugins/docker-compose`                       | link to mise's `docker-compose`, only with `--containers`                           |
 | `.git/hooks/` of this repo                                   | hooks written by `lefthook install`                                                 |
 
-**Optional AWS skills setup only** (`bash scripts/setup-aws-skills.sh <skill-name>...`): creates `~/.agents/skills/` and `~/.claude/skills/` if missing, then writes selected missing skills beneath them as `<skill-name>/` (including `SKILL.md`, `.aws-skill-metadata` and any bundled references, scripts or assets). Existing skill directories are preserved. These paths are not written by `bootstrap.sh`. The separate update and removal commands above replace or delete only the selected skill's files.
+**Optional AWS skills setup only** (`bash scripts/setup-aws-skills.sh <skill-name>...`): creates `~/.agents/skills/` and `~/.claude/skills/` (or `<CLAUDE_CONFIG_DIR>/skills/` when the expanded override directory already exists) if missing, then writes selected missing skills beneath them as `<skill-name>/` (including `SKILL.md`, `.aws-skill-metadata` and any bundled references, scripts or assets). Existing skill directories are preserved. These paths are not written by `bootstrap.sh`. The separate update and removal commands above replace or delete only the selected skill's files.
 
 **Settings written with `defaults` (macOS):** `com.apple.desktopservices` `DSDontWriteNetworkStores` and `DSDontWriteUSBStores` (both true), and `com.googlecode.iterm2` `Default Bookmark Guid` (the profile above becomes the iTerm2 default).
 
