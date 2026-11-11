@@ -5,6 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # shellcheck source=scripts/setup-aws-skills.sh
 . "$ROOT_DIR/scripts/setup-aws-skills.sh"
 
+# Default fixtures must never inherit a real user's Claude installation path.
+# Override scenarios below set this only for calls using disposable directories.
+unset CLAUDE_CONFIG_DIR
+
 TEST_SKILLS_ROOT="$(mktemp -d)"
 trap 'rm -rf "$TEST_SKILLS_ROOT"' EXIT
 CALLS=()
