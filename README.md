@@ -44,6 +44,75 @@ If a tool fails to install, the script keeps going and lists every failure with 
 
 VS Code and Antigravity CLI have no mise package, so install them by hand and re-run the script. On a fresh machine the first run ends with a note that the VS Code CLI was not found. That is expected.
 
+## Optional AWS skills for Codex and Claude Code
+
+The bootstrap installs AWS CLI through mise. It does not sign in to AWS or install agent skills. After the bootstrap, use [scripts/setup-aws-skills.sh](scripts/setup-aws-skills.sh) to install only the skills you choose from the official [Agent Toolkit for AWS catalog](https://docs.aws.amazon.com/agent-toolkit/latest/userguide/aws-cli.html). It targets Codex's shared **Universal** skills directory and Claude Code's skills directory explicitly.
+
+First select a named profile and authenticate. For an existing IAM Identity Center profile:
+
+```bash
+export AWS_PROFILE=example-dev
+mise exec -- aws sso login --profile "$AWS_PROFILE"
+mise exec -- aws sts get-caller-identity --profile "$AWS_PROFILE"
+```
+
+If the SSO profile does not exist, configure it first with `mise exec -- aws configure sso --profile example-dev`. If you use AWS console-based sign-in instead of IAM Identity Center, use `mise exec -- aws login --profile "$AWS_PROFILE"` in place of `sso login`. Logging in to a named profile does not select it for subsequent commands; keep `AWS_PROFILE` set or pass `--profile` on every call. Existing credential environment variables can override profile credentials, so confirm the returned account and identity before continuing.
+
+Select a small subset, for example:
+
+```bash
+bash scripts/setup-aws-skills.sh aws-iam aws-serverless
+```
+
+These nine skills are examples, not a required bundle:
+
+| Skill                             | Use                                                     |
+| --------------------------------- | ------------------------------------------------------- |
+| `aws-billing-and-cost-management` | Costs, budgets and optimization                         |
+| `aws-compute`                     | EC2 and fleet operations                                |
+| `aws-iam`                         | IAM roles, policies and common pitfalls                 |
+| `aws-networking`                  | Routing to networking and traffic-protection procedures |
+| `aws-security`                    | Security service configuration and findings             |
+| `aws-serverless`                  | Lambda, APIs and event-driven service selection         |
+| `aws-well-architected-review`     | Workload architecture reviews                           |
+| `launch-with-aws`                 | Application migration with AWS Blocks                   |
+| `signing-in-to-aws`               | Local AWS authentication guidance                       |
+
+To select all nine, name them explicitly:
+
+```bash
+bash scripts/setup-aws-skills.sh \
+  aws-billing-and-cost-management aws-compute aws-iam aws-networking \
+  aws-security aws-serverless aws-well-architected-review \
+  launch-with-aws signing-in-to-aws
+```
+
+The script uses the mise-managed CLI, checks for toolkit support, and installs the latest catalog version of each missing skill. It preserves existing skill directories and their versions, including manually installed skills; it reports an incomplete directory instead of overwriting it. For Claude Code, it honors an existing `CLAUDE_CONFIG_DIR` directory (including `~` and `~/` prefixes); an unset, empty or nonexistent override falls back to `~/.claude`, matching AWS CLI behavior. Failures are reported while the remaining installations are attempted; rerun the same command to retry missing copies. Catalog requests use `us-east-1`, independently of your workload Region. No cloud resources, MCP configuration, credentials or project rules are changed by this script. Restart both agents after installation.
+
+Inspect installations and check for available updates separately:
+
+```bash
+mise exec -- aws agent-toolkit list-installed-skills --agent universal
+mise exec -- aws agent-toolkit list-installed-skills --agent claude-code
+mise exec -- aws agent-toolkit check-skill-updates --all --region us-east-1
+```
+
+To deliberately update one skill in both agents:
+
+```bash
+mise exec -- aws agent-toolkit update-skill --skill-name aws-serverless --agent universal --region us-east-1
+mise exec -- aws agent-toolkit update-skill --skill-name aws-serverless --agent claude-code --region us-east-1
+```
+
+To remove an unwanted skill, for example `launch-with-aws`, remove only that skill from each agent:
+
+```bash
+mise exec -- aws agent-toolkit remove-skill --skill-name launch-with-aws --agent universal
+mise exec -- aws agent-toolkit remove-skill --skill-name launch-with-aws --agent claude-code
+```
+
+Removal deletes the selected local skill files. Leave that skill out of future setup commands to keep it absent. Restart the agents after updates or removals. AWS CLI manages these skills separately from skills installed through `npx skills`; use the same installation mechanism for future maintenance.
+
 ## Learn the tools you just installed
 
 Open a new terminal, then:
@@ -132,6 +201,8 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 | `~/.docker/cli-plugins/docker-compose`                       | link to mise's `docker-compose`, only with `--containers`                           |
 | `.git/hooks/` of this repo                                   | hooks written by `lefthook install`                                                 |
 
+**Optional AWS skills setup only** (`bash scripts/setup-aws-skills.sh <skill-name>...`): creates `~/.agents/skills/` and `~/.claude/skills/` (or `<CLAUDE_CONFIG_DIR>/skills/` when the expanded override directory already exists) if missing, then writes selected missing skills beneath them as `<skill-name>/` (including `SKILL.md`, `.aws-skill-metadata` and any bundled references, scripts or assets). Existing skill directories are preserved. These paths are not written by `bootstrap.sh`. The separate update and removal commands above replace or delete only the selected skill's files.
+
 **Settings written with `defaults` (macOS):** `com.apple.desktopservices` `DSDontWriteNetworkStores` and `DSDontWriteUSBStores` (both true), and `com.googlecode.iterm2` `Default Bookmark Guid` (the profile above becomes the iTerm2 default).
 
 **To undo it:** delete the files in the first table, remove the lines mentioning `bootstrap-dev-env` and the mise, starship, zoxide and fzf lines from your startup files, remove the `[include]` from your git config, and remove the `source` line from `~/.vimrc`.
@@ -141,6 +212,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 - **Add a tool:** add a `tool:command` line to [tools/mise-common.txt](tools/mise-common.txt) (or a platform list), add a line to `_explain_tools_data` in [config/shell/explain.sh](config/shell/explain.sh), and optionally a cheat sheet.
 - **GNU command help:** update [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) (`package|command|description|example`); use a dedicated cheat sheet for a longer explanation. Examples are displayed as text and never executed. Run `bash scripts/test-gnu-tools.sh` to check coverage and help dispatch.
 - **GNU verification:** `bash scripts/test-gnu-verification.sh` tests successful and missing commands, BSD/uutils fallbacks and re-runs without installing anything. Run it with `/bin/bash` on macOS to cover Bash 3.2.
+- **AWS skills setup:** `bash scripts/test-aws-skills.sh` checks selective installation, preservation and failure handling with mocked AWS calls; it does not access AWS or installed skills.
 - **Add a platform:** see [platforms/README.md](platforms/README.md).
 - The scripts run on the bash 3.2 that ships with macOS: no associative arrays, `mapfile`, `${var,,}` or other bash 4+ features. `lefthook` checks `shellcheck -s bash` and `shfmt`.
 
