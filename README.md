@@ -38,11 +38,29 @@ If a tool fails to install, the script keeps going and lists every failure with 
 12. macOS extras: the JetBrains Mono Nerd Font into `~/Library/Fonts`, [iTerm2](https://iterm2.com/) and [Zed](https://zed.dev/) into `~/Applications` (no admin rights), the `bootstrap-dev-env` iTerm2 profile from [config/macos/iterm/dev-env.json](config/macos/iterm/dev-env.json) as the default, the `zed` command linked into `~/.local/bin`, and the [AWS Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html) (`session-manager-plugin` in `~/.local/bin`, which `aws ssm start-session` needs; mise has no package for it). The profile uses **iTerm2 → Settings → Profiles → General → Working Directory → Reuse previous session's directory**. Quit iTerm2 before running the script, because it can overwrite its preferences on quit.
 13. Asks whether git should open Zed (`zed --wait`) or vim for commit messages. An editor you already set is kept.
 14. Installs this repo's git hooks with `lefthook install` ([lefthook.yml](lefthook.yml)): `shellcheck`, `shfmt`, `markdownlint-cli2`, `prettier --check`, a JSON check, a `gitleaks` secret scan, and a [Conventional Commits](https://www.conventionalcommits.org/) check on the message.
-15. With `--containers`: installs `docker`, `docker-compose`, `colima` and `lima` ([tools/mise-containers.txt](tools/mise-containers.txt)) and links `docker-compose` into `~/.docker/cli-plugins`. No engine runs by default: start one with `colima start`.
+15. With `--containers`: installs `docker`, `docker-compose`, `colima` and `lima` ([tools/mise-containers.txt](tools/mise-containers.txt)) and links `docker-compose` into `~/.docker/cli-plugins`. Prints an architecture-aware Colima startup suggestion, detecting Apple Silicon even in a Rosetta terminal. No engine runs by default, existing profiles are preserved, and the active Docker context is not changed. See the container setup below.
 16. Stops macOS from writing `.DS_Store` files on network shares and USB drives (applies after you log out and back in).
 17. Installs the VS Code extensions listed in [config/vscode/extensions.txt](config/vscode/extensions.txt).
 
 VS Code and Antigravity CLI have no mise package, so install them by hand and re-run the script. On a fresh machine the first run ends with a note that the VS Code CLI was not found. That is expected.
+
+## Container setup on macOS
+
+Run `./bootstrap.sh --containers` to install the tools, then inspect `colima version`, `colima start --help` and `colima list`. The bootstrap prints a suggested command for a new profile; it does not run it or edit Colima configuration. Check for a supported macOS version (VZ and Rosetta require macOS 13 or newer), and choose an unused profile name instead of `dev` if needed:
+
+```bash
+# Apple Silicon: native ARM64 VM, with Rosetta available for AMD64 Linux processes.
+colima start dev --runtime docker --arch aarch64 --vm-type vz --vz-rosetta --activate=false
+
+# Intel Mac: native x86_64 VM; Rosetta is not used.
+colima start dev --runtime docker --arch x86_64 --vm-type vz --activate=false
+```
+
+Use the command for your hardware, not both. Prefer native ARM64 images on Apple Silicon. Select `--platform linux/amd64` per container only when needed; enabling Rosetta does not make all containers AMD64. A full `x86_64` QEMU VM on Apple Silicon is a slower alternative for workloads that need an x86 guest/kernel, not the general default. See [Lima's multi-architecture guide](https://lima-vm.io/docs/config/multi-arch/) and [Colima's documentation](https://github.com/abiosoft/colima).
+
+Existing profiles need inspection before changes: creation flags do not migrate their architecture, VM type or runtime. Do not delete or recreate a profile just to apply these suggestions. `--activate=false` preserves the active Docker context. Discover and inspect the new profile's context with `docker context ls` and `docker context inspect CONTEXT`, then use `docker --context CONTEXT info` to verify readiness. Use `docker --context CONTEXT ...` for subsequent commands. If you deliberately want Colima to be your active context for future Docker commands, run `docker context use CONTEXT` after verifying its endpoint and any `DOCKER_HOST` or `DOCKER_CONTEXT` overrides.
+
+This generic bootstrap does not install project-selected agent skills. A workspace bootstrap can separately install the Colima skill for Codex and Claude Code; that does not configure a VM or select a Docker context.
 
 ## Optional AWS skills for Codex and Claude Code
 
@@ -213,6 +231,7 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 - **GNU command help:** update [config/shell/gnu-tools.txt](config/shell/gnu-tools.txt) (`package|command|description|example`); use a dedicated cheat sheet for a longer explanation. Examples are displayed as text and never executed. Run `bash scripts/test-gnu-tools.sh` to check coverage and help dispatch.
 - **GNU verification:** `bash scripts/test-gnu-verification.sh` tests successful and missing commands, BSD/uutils fallbacks and re-runs without installing anything. Run it with `/bin/bash` on macOS to cover Bash 3.2.
 - **AWS skills setup:** `bash scripts/test-aws-skills.sh` checks selective installation, preservation and failure handling with mocked AWS calls; it does not access AWS or installed skills.
+- **Colima startup suggestions:** `bash scripts/test-colima-guidance.sh` checks Apple Silicon, Intel, Rosetta terminals and unsupported/unknown platforms using mocked system probes. It does not start a VM or change Docker contexts.
 - **Add a platform:** see [platforms/README.md](platforms/README.md).
 - The scripts run on the bash 3.2 that ships with macOS: no associative arrays, `mapfile`, `${var,,}` or other bash 4+ features. `lefthook` checks `shellcheck -s bash` and `shfmt`.
 

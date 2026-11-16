@@ -8,8 +8,8 @@ colima stop                                   # shut the VM down (containers sto
 colima restart                                # stop and start again
 colima ssh                                    # open a shell inside the Linux VM
 colima ssh -- docker ps                       # run one command inside the VM
-colima start --arch x86_64                    # run an Intel (amd64) VM on Apple silicon: slower, for images that only exist for amd64
-colima start --vz-rosetta                     # run amd64 containers on an Apple-silicon VM using Rosetta (faster than a full Intel VM)
+colima start intel-test --arch x86_64 --vm-type qemu --activate=false # new full Intel VM on Apple Silicon: slow; only when an x86 guest/kernel is needed
+colima start dev --arch aarch64 --vm-type vz --vz-rosetta --activate=false # new native Apple Silicon VM with Rosetta for AMD64 processes (macOS 13+)
 colima start --mount ~/work:w                 # share a folder with the VM; ':w' makes it writable (shared folders are read-only otherwise)
 colima start --edit                           # open the configuration file before starting; colima template edits the defaults for new profiles
 colima start --profile work                   # a separate VM with its own settings and its own docker context (docker context ls)
@@ -20,7 +20,10 @@ colima update                                 # update the container runtime ins
 colima delete                                 # DESTROY the VM with its images, containers and volumes. Cannot be undone; agents confirm first
 colima version                                # versions of Colima and the Lima layer under it (mise manages both)
 docker context ls ; docker context use colima # docker talks to Colima through a context; use switches which engine the docker command uses
-echo $DOCKER_HOST                             # if set, it overrides the context: unset it when docker cannot find the engine
-Start it once per login: colima start. docker commands fail with 'Cannot connect to the Docker daemon' while it is stopped.
+echo $DOCKER_HOST                             # inspect socket overrides; an explicit docker --context CONTEXT takes precedence
+Start the chosen profile when needed: colima start dev --activate=false (substitute its name; colima start alone selects default).
+Inspect colima list before starting; use unused names for new profiles. On Intel Macs use a native x86_64 VZ VM without --vz-rosetta.
+--activate=false preserves the active Docker context; inspect docker context ls, then use docker --context CONTEXT info and docker --context CONTEXT ... explicitly.
+Rosetta does not change the VM architecture or force AMD64 images; prefer native images and select --platform linux/amd64 per container when needed.
 The Docker socket is under ~/.colima/default/, owned by your user. dockerd runs as root only inside the VM.
 Related: explain-docker, explain-docker-compose.
