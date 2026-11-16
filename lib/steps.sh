@@ -505,7 +505,7 @@ configure_docker() {
 	attempt "link docker-compose as a docker CLI plugin" \
 		"mkdir -p ~/.docker/cli-plugins && ln -sfn <mise docker-compose> ~/.docker/cli-plugins/docker-compose" \
 		install_docker_compose_plugin
-	log_info "No Docker engine runs by default: start one with 'colima start' (see 'explain colima')."
+	log_info "No Docker engine runs by default. Inspect 'colima list' before starting a profile (see 'explain colima')."
 }
 
 # Run vim from mise when it has one, else whatever vim is on PATH.

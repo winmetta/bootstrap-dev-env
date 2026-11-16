@@ -276,7 +276,37 @@ platform_settings() {
 }
 
 # Printed at the end of the run.
+platform_colima_next_steps() {
+	local version major arch
+	version="$(sw_vers -productVersion)" || return 0
+	major="${version%%.*}"
+	if [[ ! "$major" =~ ^[0-9]+$ ]] || ((major < 13)); then
+		log_warn "Check Colima's supported macOS versions before starting a VM; VZ/Rosetta needs macOS 13 or newer."
+		return 0
+	fi
+	# uname can report x86_64 in a Rosetta terminal on Apple Silicon.
+	if [[ "$(sysctl -n hw.optional.arm64 2>/dev/null || true)" == 1 ]]; then
+		arch=arm64
+	else
+		arch="$(uname -m)"
+	fi
+	log_info "Inspect 'colima list' first; the examples below create a new profile named dev. Choose an unused name."
+	case "$arch" in
+	arm64)
+		log_info "colima start dev --runtime docker --arch aarch64 --vm-type vz --vz-rosetta --activate=false"
+		;;
+	x86_64)
+		log_info "colima start dev --runtime docker --arch x86_64 --vm-type vz --activate=false"
+		;;
+	*) log_warn "Unknown Mac architecture '$arch'; inspect Colima's supported architectures before starting." ;;
+	esac
+	log_info "These are suggestions only: existing profiles and the active Docker context are preserved."
+}
+
 platform_next_steps() {
 	log_info "Apps with no mise package (VS Code, Antigravity CLI) are not installed by this script:"
 	log_info "download them yourself, then re-run this script so it can install the VS Code extensions."
+	if ((WITH_CONTAINERS)); then
+		platform_colima_next_steps
+	fi
 }
