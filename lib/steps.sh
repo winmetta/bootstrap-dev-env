@@ -673,6 +673,10 @@ install_cli_tools() {
 install_azure_extensions() {
 	local mise_bin ext
 	mise_bin="$(find_mise)" || return 1
+	if ! mise_has "$mise_bin" azure-cli; then
+		log_warn "Azure CLI unavailable; skipping its extensions"
+		return 0
+	fi
 	for ext in bastion ssh; do
 		if "$mise_bin" exec azure-cli -- az extension show --name "$ext" >/dev/null 2>&1; then
 			log_ok "Azure CLI extension $ext already installed"
