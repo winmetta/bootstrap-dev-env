@@ -191,7 +191,13 @@ mise_install_all() {
 			log_ok "$tool already installed with mise"
 		else
 			log_info "installing $tool"
-			attempt "install $tool" "mise use -g $tool" "$mise_bin" use -g "$tool"
+			if [[ "$tool" == azure-cli ]]; then
+				# Azure's macOS broker dependency currently needs Python 3.14 or earlier.
+				attempt "install $tool" "mise use -g --tool-option python=3.14 azure-cli" \
+					"$mise_bin" use -g --tool-option python=3.14 "$tool"
+			else
+				attempt "install $tool" "mise use -g $tool" "$mise_bin" use -g "$tool"
+			fi
 		fi
 		verify_gnu_tool "$mise_bin" "$tool"
 		warn_if_not_mise "$cmd"

@@ -18,7 +18,7 @@ cd bootstrap-dev-env
 ./bootstrap.sh              # add --containers to also install docker, colima and lima
 ```
 
-Open a new terminal afterwards so mise takes effect, then sign in with `gh auth login`, `claude` and `codex`.
+Open a new terminal afterwards so mise takes effect, then sign in with `gh auth login`, `claude` and `codex`. Use `az login` when you need Azure; setup does not sign in or create cloud resources.
 
 If a tool fails to install, the script keeps going and lists every failure with a manual fix at the end (exit code 1). Only the platform check, the platform prerequisites and mise stop it, because everything else depends on them. It asks a few questions when it has a terminal (your git name and email, whether git should use Zed or vim, whether to replace a `~/.config/starship.toml` that differs from the shared one). Without a terminal it skips them and prints a note.
 
@@ -27,6 +27,9 @@ If a tool fails to install, the script keeps going and lists every failure with 
 1. Checks the platform and installs the Xcode Command Line Tools (`git`, `curl`, compiler). If it asks you to finish the installer, do that and re-run.
 2. Installs mise and activates it in `~/.zshrc` and `~/.bashrc` (and makes `~/.bash_profile` load `~/.bashrc`, because Terminal.app starts bash as a login shell). Adds `~/.local/bin` and mise's shims to `PATH` in `~/.zprofile` (or `$ZDOTDIR/.zprofile`) so editors such as VS Code can find tools when running Git hooks. Respects `MISE_DATA_DIR` for the shims location. Fully quit and reopen the editor after running setup.
 3. Installs the CLI tools with mise as global defaults, including Go, `just`, and GNU Coreutils, sed, grep, Findutils, Gawk, Diffutils, tar, patch, gzip and wget: the lists are [tools/mise-common.txt](tools/mise-common.txt) (every platform) and [tools/mise-macos.txt](tools/mise-macos.txt) (modern `bash`, `tree`). A project can pin another version with its own `mise.toml`. It warns when a copy of a tool outside mise comes first on `PATH`.
+
+   It also installs Azure CLI with mise, using Python 3.14 for compatibility with its macOS broker dependency, and adds the Azure CLI `bastion` and `ssh` extensions when missing. They enable native Bastion SSH when the Azure Bastion deployment supports it; native client access requires Standard or Premium Bastion with tunneling enabled, which incurs cloud charges. The free Developer SKU uses browser access. Existing installations and extensions are kept, not upgraded.
+
 4. Checks that git has a `user.name` and `user.email`, suggesting your GitHub name and `<id>+<login>@users.noreply.github.com` address (it offers to run `gh auth login` first).
 5. Installs shared git settings and aliases from [config/git/dev-env.gitconfig](config/git/dev-env.gitconfig) to `~/.config/git/bootstrap-dev-env.gitconfig`, included at the top of your global git config so your own settings win, and adds the patterns from [config/git/ignore](config/git/ignore) (such as `.DS_Store`) to your global ignore file.
 6. Turns on zsh tab completion with zsh's own completion system (no framework): [config/shell/completion.zsh](config/shell/completion.zsh) gives `ls -<Tab>` and `git ch<Tab>` option and command suggestions with descriptions, and the script generates completion files into `~/.config/bootstrap-dev-env/completions/` for the installed tools that can print one (gh, docker, colima, uv, rg, fd, bat, pulumi, mise, ...). Its `source` line is appended to `~/.zshrc` like the others, and it registers zoxide's `z` completion itself, so the order of the lines does not matter. zsh only. Run `explain completion` for the keys.
@@ -209,15 +212,16 @@ Everything the script writes, so you can review or undo it. Files it owns are re
 
 **Installed software:**
 
-| Path                                                         | What                                                                                |
-| ------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| `~/.local/bin/mise`                                          | mise itself (its installer); the tools it installs live under `~/.local/share/mise` |
-| `~/.local/bin/zed` (macOS)                                   | link to the `zed` command inside `Zed.app`                                          |
-| `~/.local/bin/session-manager-plugin` (macOS)                | the AWS Session Manager plugin binary, when missing                                 |
-| `~/Applications/iTerm.app`, `~/Applications/Zed.app` (macOS) | installed when missing from `/Applications` and `~/Applications`                    |
-| `~/Library/Fonts/JetBrainsMonoNerdFont*.ttf` (macOS)         | the Nerd Font, when missing                                                         |
-| `~/.docker/cli-plugins/docker-compose`                       | link to mise's `docker-compose`, only with `--containers`                           |
-| `.git/hooks/` of this repo                                   | hooks written by `lefthook install`                                                 |
+| Path                                                                                    | What                                                                                |
+| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `~/.local/bin/mise`                                                                     | mise itself (its installer); the tools it installs live under `~/.local/share/mise` |
+| `~/.local/bin/zed` (macOS)                                                              | link to the `zed` command inside `Zed.app`                                          |
+| `~/.local/bin/session-manager-plugin` (macOS)                                           | the AWS Session Manager plugin binary, when missing                                 |
+| `${AZURE_EXTENSION_DIR:-${AZURE_CONFIG_DIR:-~/.azure}/cliextensions}/bastion` and `ssh` | Azure CLI extensions installed when missing; existing extensions are preserved      |
+| `~/Applications/iTerm.app`, `~/Applications/Zed.app` (macOS)                            | installed when missing from `/Applications` and `~/Applications`                    |
+| `~/Library/Fonts/JetBrainsMonoNerdFont*.ttf` (macOS)                                    | the Nerd Font, when missing                                                         |
+| `~/.docker/cli-plugins/docker-compose`                                                  | link to mise's `docker-compose`, only with `--containers`                           |
+| `.git/hooks/` of this repo                                                              | hooks written by `lefthook install`                                                 |
 
 **Optional AWS skills setup only** (`bash scripts/setup-aws-skills.sh <skill-name>...`): creates `~/.agents/skills/` and `~/.claude/skills/` (or `<CLAUDE_CONFIG_DIR>/skills/` when the expanded override directory already exists) if missing, then writes selected missing skills beneath them as `<skill-name>/` (including `SKILL.md`, `.aws-skill-metadata` and any bundled references, scripts or assets). Existing skill directories are preserved. These paths are not written by `bootstrap.sh`. The separate update and removal commands above replace or delete only the selected skill's files.
 
