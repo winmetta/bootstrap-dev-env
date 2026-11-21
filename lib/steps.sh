@@ -659,6 +659,7 @@ install_cli_tools() {
 	platform_list="$(platform_tool_list)"
 	collect_tools "$ROOT_DIR/tools/mise-common.txt" ${platform_list:+"$platform_list"}
 	mise_install_all ${TOOL_ENTRIES[@]+"${TOOL_ENTRIES[@]}"}
+	install_azure_extensions
 	if ((WITH_CONTAINERS)); then
 		log_step "Container tools (docker, docker-compose, colima, lima)"
 		collect_tools "$ROOT_DIR/tools/mise-containers.txt"
@@ -666,4 +667,19 @@ install_cli_tools() {
 	else
 		NOTES+=("Container tools (docker, colima) were not installed. Add them with: ./bootstrap.sh --containers")
 	fi
+}
+
+# Use the mise-managed CLI even if an older Homebrew copy is first on PATH.
+install_azure_extensions() {
+	local mise_bin ext
+	mise_bin="$(find_mise)" || return 1
+	for ext in bastion ssh; do
+		if "$mise_bin" exec azure-cli -- az extension show --name "$ext" >/dev/null 2>&1; then
+			log_ok "Azure CLI extension $ext already installed"
+		else
+			attempt "install Azure CLI extension $ext" \
+				"mise exec azure-cli -- az extension add --name $ext" \
+				"$mise_bin" exec azure-cli -- az extension add --name "$ext" --allow-preview false --yes
+		fi
+	done
 }
