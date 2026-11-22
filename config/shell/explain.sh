@@ -163,6 +163,7 @@ diffutils|GNU Diffutils package: diff, cmp, diff3 and sdiff|explain diffutils ; 
 actionlint|checks GitHub Actions workflow files for mistakes before you push|actionlint ; actionlint .github/workflows/ci.yml
 aws|the AWS command line; sign in with SSO, then s3, ec2, logs and any other service|aws sso login --profile NAME ; aws sts get-caller-identity --profile NAME ; aws s3 ls --profile NAME
 az|Azure CLI; sign in and manage subscriptions, resources and Bastion SSH|az login ; az account show ; az network bastion ssh --help
+gcloud|Google Cloud CLI for working with projects and cloud resources|gcloud version ; gcloud config list ; gcloud projects list
 gitleaks|scans for secrets (tokens, keys, passwords) in files and git history|gitleaks git --staged --redact ; gitleaks dir .
 lefthook|runs the git hooks in lefthook.yml (checks before each commit, commit-message check)|lefthook install ; lefthook run pre-commit
 markdownlint-cli2|checks Markdown files for style problems (rules in .markdownlint.json); --fix repairs what it can|markdownlint-cli2 README.md ; markdownlint-cli2 --fix README.md

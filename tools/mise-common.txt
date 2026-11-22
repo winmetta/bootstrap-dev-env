@@ -36,6 +36,7 @@ lefthook:lefthook
 gitleaks:gitleaks
 aws-cli:aws
 azure-cli:az
+gcloud:gcloud
 pulumi:pulumi
 uv:uv
 actionlint:actionlint
