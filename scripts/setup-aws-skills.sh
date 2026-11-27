@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install selected AWS skills for Codex (Universal) and Claude Code; keep existing copies.
+# Install selected AWS skills for Universal (Antigravity, Codex) and Claude Code; keep existing copies.
 # Usage: bash scripts/setup-aws-skills.sh <skill-name>...
 # Compatible with macOS Bash 3.2. Run separately from the machine bootstrap.
 set -Eeuo pipefail
@@ -12,8 +12,8 @@ usage() {
 	cat <<'USAGE'
 Usage: bash scripts/setup-aws-skills.sh <skill-name>...
 
-Install only the named skills from the official AWS catalog for Codex (Universal)
-and Claude Code. Existing skill directories are preserved, including their versions.
+Install only the named skills from the official AWS catalog for Universal (Antigravity,
+Codex) and Claude Code. Existing skill directories are preserved, including their versions.
 Uses the mise-managed AWS CLI and the current AWS_PROFILE for catalog reads.
 No login, MCP setup, project rules, updates or removals are performed.
 
@@ -108,7 +108,7 @@ main() {
 		printf '%s\n' "AWS skills setup had failures:" "${FAILURES[@]}" >&2
 		return 1
 	fi
-	log_info "Selected AWS skills are present. Restart Codex and Claude Code to load them."
+	log_info "Selected AWS skills are present. Restart Antigravity, Codex and Claude Code to load them."
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then

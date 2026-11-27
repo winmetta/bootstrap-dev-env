@@ -16,6 +16,7 @@ gh:gh
 shellcheck:shellcheck
 shfmt:shfmt
 just:just
+agy:agy
 claude:claude
 codex:codex
 starship:starship
