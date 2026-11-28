@@ -31,6 +31,7 @@
 #   - vim: the shared vimrc and the plugins in VIM_PLUGINS
 #   - platform extras (macOS: fonts, iTerm2 profile, Zed, Finder preferences)
 #   - the VS Code extensions listed in config/vscode/extensions.txt
+#   - Antigravity IDE: read permissions for shared git config and mise tools
 #
 # GUI apps (VS Code, Antigravity IDE) have no mise package and are installed by hand. Only
 # the steps everything else depends on (platform check, prerequisites, mise) stop the
@@ -205,6 +206,7 @@ main() {
 	configure_docker
 	platform_settings
 	install_vscode_extensions
+	configure_antigravity
 	print_summary || exit 1
 }
 
