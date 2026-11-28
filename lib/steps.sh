@@ -687,3 +687,45 @@ install_azure_extensions() {
 		fi
 	done
 }
+
+# Allow Antigravity's sandbox to read the included git config and mise-managed
+# tools using expanded absolute paths (never literal `~`, which the sandbox rejects).
+install_antigravity_permissions() {
+	local cfg_file="${ANTIGRAVITY_CONFIG:-$HOME/.gemini/config/config.json}"
+	local git_dir="$HOME/.config/git"
+	local mise_dir="${MISE_DATA_DIR:-$HOME/.local/share/mise}"
+	run_tool python3 - "$cfg_file" "$git_dir" "$mise_dir" <<'PY'
+import json
+import os
+import pathlib
+import sys
+
+cfg_path = pathlib.Path(sys.argv[1])
+targets = [os.path.abspath(os.path.expanduser(p)) for p in sys.argv[2:]]
+
+if cfg_path.exists():
+    data = json.loads(cfg_path.read_text(encoding="utf-8"))
+else:
+    data = {}
+
+permissions = data.setdefault("permissions", {})
+allow = permissions.setdefault("allow", [])
+changed = False
+for target in targets:
+    rule = f"read_file({target})"
+    if rule not in allow:
+        allow.append(rule)
+        changed = True
+
+if changed:
+    cfg_path.parent.mkdir(parents=True, exist_ok=True)
+    cfg_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+PY
+}
+
+configure_antigravity() {
+	log_step "Antigravity IDE sandbox permissions"
+	attempt "configure Antigravity sandbox permissions" \
+		"add read_file permissions for '$HOME/.config/git' and '${MISE_DATA_DIR:-$HOME/.local/share/mise}' in '~/.gemini/config/config.json'" \
+		install_antigravity_permissions
+}
