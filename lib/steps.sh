@@ -689,30 +689,41 @@ install_azure_extensions() {
 }
 
 # Allow Antigravity's sandbox to read the included git config and mise-managed
-# tools using expanded absolute paths (never literal `~`, which the sandbox rejects).
+# tools using expanded absolute paths (never literal `~`, which the sandbox rejects),
+# and allow standalone local-pr-review and gh pr commands without prompting.
 install_antigravity_permissions() {
 	local cfg_file="${ANTIGRAVITY_CONFIG:-$HOME/.gemini/config/config.json}"
 	local git_dir="$HOME/.config/git"
 	local mise_dir="${MISE_DATA_DIR:-$HOME/.local/share/mise}"
-	run_tool python3 - "$cfg_file" "$git_dir" "$mise_dir" <<'PY'
+	local pr_review_scripts="$HOME/.gemini/config/skills/local-pr-review/scripts"
+	run_tool python3 - "$cfg_file" "$git_dir" "$mise_dir" "$pr_review_scripts" <<'PY'
 import json
 import os
 import pathlib
 import sys
 
 cfg_path = pathlib.Path(sys.argv[1])
-targets = [os.path.abspath(os.path.expanduser(p)) for p in sys.argv[2:]]
+read_targets = [os.path.abspath(os.path.expanduser(p)) for p in sys.argv[2:4]]
+pr_review_dir = os.path.abspath(os.path.expanduser(sys.argv[4]))
+
+desired_rules = [f"read_file({target})" for target in read_targets] + [
+    f"command(node {pr_review_dir}/)",
+    "command(gh pr view)",
+    "command(gh pr checks)",
+    "command(gh pr create)",
+    "command(gh pr merge)",
+]
 
 if cfg_path.exists():
     data = json.loads(cfg_path.read_text(encoding="utf-8"))
 else:
     data = {}
 
-permissions = data.setdefault("permissions", {})
-allow = permissions.setdefault("allow", [])
+user_settings = data.setdefault("userSettings", {})
+grants = user_settings.setdefault("globalPermissionGrants", {})
+allow = grants.setdefault("allow", [])
 changed = False
-for target in targets:
-    rule = f"read_file({target})"
+for rule in desired_rules:
     if rule not in allow:
         allow.append(rule)
         changed = True
@@ -726,6 +737,6 @@ PY
 configure_antigravity() {
 	log_step "Antigravity IDE sandbox permissions"
 	attempt "configure Antigravity sandbox permissions" \
-		"add read_file permissions for '$HOME/.config/git' and '${MISE_DATA_DIR:-$HOME/.local/share/mise}' in '~/.gemini/config/config.json'" \
+		"add read_file and command permissions in '~/.gemini/config/config.json'" \
 		install_antigravity_permissions
 }
