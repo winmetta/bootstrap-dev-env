@@ -32,7 +32,7 @@
 #   - platform extras (macOS: fonts, iTerm2 profile, Zed, Finder preferences)
 #   - the VS Code extensions listed in config/vscode/extensions.txt
 #
-# VS Code and Antigravity CLI have no mise package and are installed by hand. Only
+# GUI apps (VS Code, Antigravity IDE) have no mise package and are installed by hand. Only
 # the steps everything else depends on (platform check, prerequisites, mise) stop the
 # script. If any other tool fails to install, the script keeps going and lists every
 # failure with a manual fix at the end (exit code 1).
@@ -157,7 +157,7 @@ print_summary() {
 		log_warn "$item"
 	done
 	platform_next_steps
-	log_info "Open a new terminal so mise takes effect, then sign in with 'gh auth login', 'claude' and 'codex'."
+	log_info "Open a new terminal so mise takes effect, then sign in with 'gh auth login', 'agy', 'claude' and 'codex'."
 	((${#FAILURES[@]} == 0))
 }
 

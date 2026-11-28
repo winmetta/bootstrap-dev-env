@@ -304,7 +304,7 @@ platform_colima_next_steps() {
 }
 
 platform_next_steps() {
-	log_info "Apps with no mise package (VS Code, Antigravity CLI) are not installed by this script:"
+	log_info "Apps with no mise package (VS Code, Antigravity IDE) are not installed by this script:"
 	log_info "download them yourself, then re-run this script so it can install the VS Code extensions."
 	if ((WITH_CONTAINERS)); then
 		platform_colima_next_steps

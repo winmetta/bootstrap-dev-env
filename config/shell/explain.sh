@@ -168,6 +168,7 @@ gitleaks|scans for secrets (tokens, keys, passwords) in files and git history|gi
 lefthook|runs the git hooks in lefthook.yml (checks before each commit, commit-message check)|lefthook install ; lefthook run pre-commit
 markdownlint-cli2|checks Markdown files for style problems (rules in .markdownlint.json); --fix repairs what it can|markdownlint-cli2 README.md ; markdownlint-cli2 --fix README.md
 prettier|formats Markdown (and JSON, CSS, JS, ...) where a repo has a prettier config|prettier --check README.md ; prettier --write README.md
+agy|Antigravity CLI, an AI coding agent|agy
 claude|Claude Code, an AI coding agent|claude
 codex|Codex CLI, an AI coding agent|codex
 starship|the shell prompt: path, git branch, ahead/behind counts and a green check when synced|edit ~/.config/starship.toml ; explain-starship

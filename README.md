@@ -18,7 +18,7 @@ cd bootstrap-dev-env
 ./bootstrap.sh              # add --containers to also install docker, colima and lima
 ```
 
-Open a new terminal afterwards so mise takes effect, then sign in with `gh auth login`, `claude` and `codex`. Use `az login` when you need Azure; setup does not sign in or create cloud resources.
+Open a new terminal afterwards so mise takes effect, then sign in with `gh auth login`, `agy` (Antigravity CLI), `claude` (Claude Code CLI) and `codex` (Codex CLI). Use `az login` when you need Azure; setup does not sign in or create cloud resources.
 
 If a tool fails to install, the script keeps going and lists every failure with a manual fix at the end (exit code 1). Only the platform check, the platform prerequisites and mise stop it, because everything else depends on them. It asks a few questions when it has a terminal (your git name and email, whether git should use Zed or vim, whether to replace a `~/.config/starship.toml` that differs from the shared one). Without a terminal it skips them and prints a note.
 
@@ -45,7 +45,7 @@ If a tool fails to install, the script keeps going and lists every failure with 
 16. Stops macOS from writing `.DS_Store` files on network shares and USB drives (applies after you log out and back in).
 17. Installs the VS Code extensions listed in [config/vscode/extensions.txt](config/vscode/extensions.txt).
 
-VS Code and Antigravity CLI have no mise package, so install them by hand and re-run the script. On a fresh machine the first run ends with a note that the VS Code CLI was not found. That is expected.
+VS Code and the [Antigravity IDE](https://antigravity.google/download#antigravity-cli) app have no mise package, so install them by hand and re-run the script (the `agy` CLI is installed by mise). On a fresh machine the first run ends with a note that the VS Code CLI was not found. That is expected.
 
 ## Container setup on macOS
 
@@ -63,11 +63,11 @@ Use the command for your hardware, not both. Prefer native ARM64 images on Apple
 
 Existing profiles need inspection before changes: creation flags do not migrate their architecture, VM type or runtime. Do not delete or recreate a profile just to apply these suggestions. `--activate=false` preserves the active Docker context. Discover and inspect the new profile's context with `docker context ls` and `docker context inspect CONTEXT`, then use `docker --context CONTEXT info` to verify readiness. Use `docker --context CONTEXT ...` for subsequent commands. If you deliberately want Colima to be your active context for future Docker commands, run `docker context use CONTEXT` after verifying its endpoint and any `DOCKER_HOST` or `DOCKER_CONTEXT` overrides.
 
-This generic bootstrap does not install project-selected agent skills. A workspace bootstrap can separately install the Colima skill for Codex and Claude Code; that does not configure a VM or select a Docker context.
+This generic bootstrap does not install project-selected agent skills. A workspace bootstrap can separately install the Colima skill for Antigravity, Codex, and Claude Code; that does not configure a VM or select a Docker context.
 
-## Optional AWS skills for Codex and Claude Code
+## Optional AWS skills for Antigravity, Codex and Claude Code
 
-The bootstrap installs AWS CLI through mise. It does not sign in to AWS or install agent skills. After the bootstrap, use [scripts/setup-aws-skills.sh](scripts/setup-aws-skills.sh) to install only the skills you choose from the official [Agent Toolkit for AWS catalog](https://docs.aws.amazon.com/agent-toolkit/latest/userguide/aws-cli.html). It targets Codex's shared **Universal** skills directory and Claude Code's skills directory explicitly.
+The bootstrap installs AWS CLI through mise. It does not sign in to AWS or install agent skills. After the bootstrap, use [scripts/setup-aws-skills.sh](scripts/setup-aws-skills.sh) to install only the skills you choose from the official [Agent Toolkit for AWS catalog](https://docs.aws.amazon.com/agent-toolkit/latest/userguide/aws-cli.html). It targets the shared **Universal** skills directory (`~/.agents/skills/`, used by both Antigravity and Codex) and Claude Code's skills directory explicitly.
 
 First select a named profile and authenticate. For an existing IAM Identity Center profile:
 
@@ -108,7 +108,7 @@ bash scripts/setup-aws-skills.sh \
   launch-with-aws signing-in-to-aws
 ```
 
-The script uses the mise-managed CLI, checks for toolkit support, and installs the latest catalog version of each missing skill. It preserves existing skill directories and their versions, including manually installed skills; it reports an incomplete directory instead of overwriting it. For Claude Code, it honors an existing `CLAUDE_CONFIG_DIR` directory (including `~` and `~/` prefixes); an unset, empty or nonexistent override falls back to `~/.claude`, matching AWS CLI behavior. Failures are reported while the remaining installations are attempted; rerun the same command to retry missing copies. Catalog requests use `us-east-1`, independently of your workload Region. No cloud resources, MCP configuration, credentials or project rules are changed by this script. Restart both agents after installation.
+The script uses the mise-managed CLI, checks for toolkit support, and installs the latest catalog version of each missing skill. It preserves existing skill directories and their versions, including manually installed skills; it reports an incomplete directory instead of overwriting it. For Claude Code, it honors an existing `CLAUDE_CONFIG_DIR` directory (including `~` and `~/` prefixes); an unset, empty or nonexistent override falls back to `~/.claude`, matching AWS CLI behavior. Failures are reported while the remaining installations are attempted; rerun the same command to retry missing copies. Catalog requests use `us-east-1`, independently of your workload Region. No cloud resources, MCP configuration, credentials or project rules are changed by this script. Restart the agents after installation.
 
 Inspect installations and check for available updates separately:
 
